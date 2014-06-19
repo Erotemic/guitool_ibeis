@@ -15,6 +15,34 @@ import numpy as np
 
 #API_MODEL_BASE = QtCore.QAbstractTableModel
 API_MODEL_BASE = QtCore.QAbstractItemModel
+ENABLE_DATA_CACHING = False
+
+class TreeModelIndex(QtCore.QModelIndex):
+    def __init__(self):
+        QtCore.QModelIndex.__init__(self)
+        self._parentptr = QtCore.QModelIndex()
+        self._row = -1
+        self._col = -1
+        self._obj = 0
+
+    def __init__(self, other):
+        QtCore.QModelIndex.__init__(self, other)
+        self._parentptr = other.parent()
+        self._row = other.row()
+        self._col = other.col()
+        self._obj = 0
+
+    def parent(self):
+        return self._parentptr
+
+    def row(self):
+        return self._row
+
+    def column(self):
+        return self._col
+
+    def internalPointer(self):
+        return self._obj
 
 
 class ChangeLayoutContext(object):
@@ -325,7 +353,7 @@ class APITableModel(API_MODEL_BASE):
     def get_header_data(model, colname, row):
         """ Use _get_data if the column number is known """
         col = model.col_name_list.index(colname)
-        return model._get_data(row, col)
+        return model._get_data(row, col, QtCore.QModelItem())
 
     #--------------------------------
     # --- API Interface Functions ---
@@ -336,7 +364,9 @@ class APITableModel(API_MODEL_BASE):
         assert col is not None, 'bad column'
 
     @default_method_decorator
-    def _get_row_id(model, row, col=None):
+    #def _get_row_id(model, row, col=None, level=0):
+    def _get_row_id(model, row, col=None, parent=QtCore.QModelIndex()):
+        level = model.col_level_list[parent.column()] if parent.isValid() else -1
         if col is not None:
             num = model.col_name_list_counts[model.col_name_list[col]]
             # FOR NOW, NO MIXED TYPES: STRIPPED AND VERTICAL
@@ -345,7 +375,15 @@ class APITableModel(API_MODEL_BASE):
             col = 0
 
         try:
-            id_ = model.level_index_list[0][row]
+            #print('in _get_row_id: level %r, row %r, col %r' % (level, row, col))
+            #id_ = model.level_index_list[level][row] # may need to recurse up the tree here?
+            #id_ = model.level_index_list[level+1][parent.column()] # may need to recurse up the tree here?
+            tmp = parent
+            id_ = model.level_index_list[level+1]
+            while tmp.isValid():
+                id_ = id_[parent.row()]
+                tmp = tmp.parent()
+            id_ = id_[row]
             return id_
         except IndexError as ex:  # NOQA
             # msg = '\n'.join([
@@ -363,7 +401,9 @@ class APITableModel(API_MODEL_BASE):
         return model.col_type_list[col]
 
     @default_method_decorator
-    def _get_data(model, row, col):
+    def _get_data(model, row, col, parent):
+        level = model.col_level_list[col]
+        #print('in _get_data: row %r, col %r, level %r' % (row, col, level))
         #
         # <HACK: COLUMN_STRIPING>
         num = model.col_name_list_counts[model.col_name_list[col]]
@@ -374,13 +414,13 @@ class APITableModel(API_MODEL_BASE):
             col = 0
         # </HACK: COLUMN_STRIPING>
         #
-        if row < len(model.level_index_list[0]):
+        if row < len(model.level_index_list[level]):
             getter = model.col_getter_list[col]  # getter for this column
-            row_id = model._get_row_id(row)  # row_id w.r.t. to sorting
+            row_id = model._get_row_id(row, parent=parent)  # row_id w.r.t. to sorting
             # <HACK: MODEL CACHE>
             cachekey = (row_id, col)
             try:
-                if True:  # Cache is disabled
+                if not ENABLE_DATA_CACHING:  # Cache is disabled
                     raise KeyError('')
                 data = model.cache[cachekey]
             except KeyError:
@@ -389,8 +429,8 @@ class APITableModel(API_MODEL_BASE):
             # </HACK: MODEL CACHE>
             return data
         else:
-            #raise AssertionError('row=%r, < len(model.row_index_list)=%r' % (row, len(model.level_index_list[0])))
-            return None
+            raise AssertionError('row=%r, < len(model.level_index_list[%r])=%r' % (row, level, len(model.level_index_list[level])))
+            #return None
             #return ('','',())
             #return "!!!<EMPTY FOR STRIPE>!!!"
 
@@ -424,6 +464,13 @@ class APITableModel(API_MODEL_BASE):
     #------------------------
     # --- QtGui Functions ---
     #------------------------
+
+#    def createIndex(row, col, object=0):
+#        i = TreeModelIndex()
+#        i._row = row
+#        i._col = col
+#        i._obj = object
+#
     @default_method_decorator
     def parent(model, qindex):
         """
@@ -439,12 +486,13 @@ class APITableModel(API_MODEL_BASE):
         calling QModelIndex member functions, such as QModelIndex.parent(),
         since indexes belonging to your model will simply call your
         implementation, leading to infinite recursion.  """
-        if qindex.isValid():
-            indexlevel = model.col_level_list[qindex.column()]
-            parentlevel_cols = model._get_columns_of_level(indexlevel-1)
-            if len(parentlevel_cols) > 0:
-                return model.createIndex(qindex.row(), parentlevel_cols[0])
-        return QtCore.QModelIndex()
+#        if qindex.isValid():
+#            indexlevel = model.col_level_list[qindex.column()]
+#            parentlevel_cols = model._get_columns_of_level(indexlevel-1)
+#            if len(parentlevel_cols) > 0:
+#                return model.createIndex(qindex.row(), parentlevel_cols[0])
+#        return QtCore.QModelIndex()
+        return qindex.__dict__.get('parent_index', QtCore.QModelIndex())
 
     @default_method_decorator
     def index(model, row, column, parent=QtCore.QModelIndex()):
@@ -455,9 +503,32 @@ class APITableModel(API_MODEL_BASE):
         components can use to refer to items in your model.
         NOTE: Object must be specified to sort delegates.
         """
-        row_id = model._get_row_id(row)
+        parentlevel = model.col_level_list[parent.column()]
+        #print('index(%r, %r, %r)'%(row, column, parentlevel))
+        #row_id = model._get_row_id(row, parentlevel)
+        row_id = model._get_row_id(row, parent=parent)
         #data = model._get_data(row, column)
-        return model.createIndex(row, column, object=row_id)
+        qindex = model.createIndex(row, column, object=row_id)
+        qindex.__dict__['parent_index'] = parent
+        qindex.parent = lambda: model.parent(qindex)
+        qindex.child = lambda r, c: model.index(r,c,qindex)
+#        qindex.row = lambda: row - model.rowCount(parent)
+#        qindex.column = lambda: column - model.columnCount(parent)
+        #print('in index: %r:%r, %r:%r, %r:%r' % (qindex.parent(), type(qindex.parent()), qindex.row(), type(qindex.row()), qindex.column(), type(qindex.column())))
+        return qindex
+
+#    def hasIndex(model, row, column, parent=QtCore.QModelIndex()):
+#        parentlevel = model.col_level_list[parent.column()]
+#        print('hasIndex(%r, %r, %r)'%(row, column, parentlevel))
+#        if len(model.index_level_list[column]) > row:
+#            return parentlevel < model.col_level_list[column]
+
+    def hasChildren(model, parent=QtCore.QModelIndex()):
+        parent_level = model.col_level_list[parent.column()] if parent.isValid() else -1
+        #cols = model._get_columns_of_level(parent_level+1)
+        hc = parent_level+1 in model.col_level_list
+        print('in hasChildren: level %r, hc %r, row %r, col %r' % (parent_level, hc, parent.row(), parent.column()))
+        return hc
 
     @default_method_decorator
     def rowCount(model, parent=QtCore.QModelIndex()):
@@ -469,7 +540,7 @@ class APITableModel(API_MODEL_BASE):
                 # <HACK>
                 counts = [np.ceil(length / count) for name, count in model.col_name_list_counts.items()]
                 # </HACK>
-                return max(counts)
+                return int(max(counts)) # numpy.float64 is otherwise returned, since np.ceil is used...
             except:
                 return len(model.level_index_list[parent_level+1])
         else:
@@ -492,9 +563,12 @@ class APITableModel(API_MODEL_BASE):
         invalid QVariant instead of returning 0.  """
         if not qtindex.isValid():
             return None
+        parent = qtindex.parent()
         flags = model.flags(qtindex)
         row = qtindex.row()
         col = qtindex.column()
+        if qtindex.parent().isValid():
+            col += len(model._get_columns_of_level(model.col_level_list[qtindex.parent().column()]))
         type_ = model._get_type(col)
 
         #if role == Qt.SizeHintRole:
@@ -520,7 +594,7 @@ class APITableModel(API_MODEL_BASE):
                 return QtCore.QVariant(model.EditableItemColor)
             elif flags & Qt.ItemIsUserCheckable:
                 # Checkable color depends on the truth value
-                data = model._get_data(row, col)
+                data = model._get_data(row, col, parent)
                 if data:
                     return QtCore.QVariant(model.TrueItemColor)
                 else:
@@ -545,7 +619,7 @@ class APITableModel(API_MODEL_BASE):
         # Specify CheckState Role:
         if role == Qt.CheckStateRole:
             if flags & Qt.ItemIsUserCheckable:
-                data = model._get_data(row, col)
+                data = model._get_data(row, col, parent)
                 return Qt.Checked if data else Qt.Unchecked
         #
         # Return the data to edit or display
@@ -553,12 +627,12 @@ class APITableModel(API_MODEL_BASE):
             # For types displayed with custom delegates do not cast data into a
             # qvariant. This includes PIXMAP, BUTTON, and COMBO
             if type_ in qtype.QT_DELEGATE_TYPES:
-                data = model._get_data(row, col)
+                data = model._get_data(row, col, parent)
                 #print(data)
                 return data
             else:
                 # Display data with default delegate by casting to a qvariant
-                data = model._get_data(row, col)
+                data = model._get_data(row, col, parent)
                 value = qtype.cast_into_qt(data)
                 return value
         else:
@@ -594,7 +668,7 @@ class APITableModel(API_MODEL_BASE):
                 type_ = model.col_type_list[col]
                 data = qtype.cast_from_qt(value, type_)
             # Do actual setting of data
-            old_data = model._get_data(row, col)
+            old_data = model._get_data(row, col, parent)
             if old_data != data:
                 model._set_data(row, col, data)
                 # Emit that data was changed and return succcess
