@@ -52,8 +52,12 @@ class FilterProxyModel(BASE_CLASS):
         self.sourceModel().sort(column, order)
 
     def get_header_data(self, colname, proxyIndex):
-        ret = self.sourceModel().get_header_data(colname, proxyIndex)
-        return ret
+        if proxyIndex is None:
+            return None
+        elif proxyIndex.isValid():
+            sourceIndex = self.mapToSource(proxyIndex)
+            ret = self.sourceModel().get_header_data(colname, sourceIndex)
+            return ret
 
     def update_filterdict(self, new_dict):
         self.filter_dict = new_dict

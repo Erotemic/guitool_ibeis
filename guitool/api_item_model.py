@@ -441,13 +441,16 @@ class APIItemModel(API_MODEL_BASE):
         """ Use _get_data if the column number is known """
         # <HACK>
         # Hacked to only work on tables. Should be in terms of qtindex
-        row = qtindex.row()
-        assert max(model.col_level_list) == 0, "Must be a table. Input is a tree"
-        col = model.col_name_list.index(colname)
-        id_ = model.root_node[row].get_id()
-        getter = model.col_getter_list[col]
-        value = getter(id_)
-        return value
+        print("get_header_data")
+        if qtindex.isValid():
+            node = qtindex.internalPointer()
+            print(type(node))
+            assert max(model.col_level_list) == 0, "Must be a table. Input is a tree"
+            col = model.col_name_list.index(colname)
+            id_ = node.get_id()
+            getter = model.col_getter_list[col]
+            value = getter(id_)
+            return value
         # </HACK>
 
     @default_method_decorator
