@@ -17,6 +17,7 @@ class FilterProxyModel(BASE_CLASS):
         base_class=BASE_CLASS)
 
     def __init__(self, parent=None):
+        assert parent is not None, "Must specify parent of filterProxyModel"
         BASE_CLASS.__init__(self, parent=parent)
         self.filter_dict = {}
 
@@ -28,43 +29,16 @@ class FilterProxyModel(BASE_CLASS):
         r2, c2, p2 = row, col, parent
         return r2, c2, p2
 
-    def mapToSource(self, proxyIndex):
-        """ returns index into original model """
-        if proxyIndex is None:
-            return None
-        if proxyIndex.isValid():
-            r2, c2, p2 = self.proxy_to_source(proxyIndex.row(), proxyIndex.column())
-            sourceIndex = self.sourceModel().index(r2, c2, parent=p2)  # self.sourceModel().root_node[r2]
-        else:
-            sourceIndex = QtCore.QModelIndex()
-        return sourceIndex
-
-    def mapFromSource(self, sourceIndex):
-        """ returns index into proxy model """
-        if sourceIndex is None:
-            return None
-        if sourceIndex.isValid():
-            r2, c2, p2 = self.source_to_proxy(sourceIndex.row(), sourceIndex.column(), sourceIndex.parent())
-            proxyIndex = self.index(r2, c2, p2)
-        else:
-            proxyIndex = QtCore.QModelIndex()
-        return proxyIndex
-
     def filterAcceptsRow(self, source_row, source_parent):
         source = self.sourceModel()
-        row_type = str(source.data(source.index(source_row, 2, parent=source_parent)))
+        source_index = source.index(source_row, 2, parent=source_parent)
+        row_type = str(source.data(source_index))
         #print('%r \'%r\'' % (source_row, row_type))
+        #print(self.filter_dict)
         #print(self.filter_dict)
         rv = self.filter_dict.get(row_type, True)
         #print('return value %r' % rv)
         return rv
-
-    def index(self, row, col, parent=QtCore.QModelIndex()):
-        if (row, col) != (-1, -1):
-            proxyIndex = self.createIndex(row, col, parent)
-        else:
-            proxyIndex = QtCore.QModelIndex()
-        return proxyIndex
 
     def data(self, proxyIndex, role=Qt.DisplayRole):
         sourceIndex = self.mapToSource(proxyIndex)
@@ -77,22 +51,8 @@ class FilterProxyModel(BASE_CLASS):
     def sort(self, column, order):
         self.sourceModel().sort(column, order)
 
-    def parent(self, index):
-        return self.sourceModel().parent(self.mapToSource(index))
-
     def get_header_data(self, colname, proxyIndex):
-        #print('[guitool] calling default map to source')
-        #print('[guitool] proxyIndex=%r' % proxyIndex)
-        #proxy_keys = dir(proxyIndex)
-        #proxy_vals = [getattr(proxyIndex, key) for key in proxy_keys]
-        #proxy_dict = dict(zip(proxy_keys, proxy_vals))
-        #print('[guitool] proxyIndex.__dict__=%s' % utool.dict_str(proxy_dict))
-        #utool.embed()
-        #sourceIndex = BASE_CLASS.mapToSource(self, proxyIndex)
-        sourceIndex = self.mapToSource(proxyIndex)
-        #print('[guitool] calling set header')
-        ret = self.sourceModel().get_header_data(colname, sourceIndex)
-        #print('[guitool] finished')
+        ret = self.sourceModel().get_header_data(colname, proxyIndex)
         return ret
 
     def update_filterdict(self, new_dict):
