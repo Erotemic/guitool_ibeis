@@ -3,13 +3,16 @@ from __future__ import absolute_import, division, print_function
 from setuptools import setup
 from Cython.Distutils import build_ext
 import utool
+"""
+python setup.py build_ext --inplace
+python setup.py develop
+"""
 
-ext_modules = utool.find_ext_modules()
+ext_modules = utool.find_ext_modules(disable_warnings=True)
 
 INSTALL_REQUIRES = [
     #'PyQt4'  # non pipi index
 ]
-CYTHON_FILES = utool.glob('*_cython.pyx')
 
 if __name__ == '__main__':
     #import pyximport; pyximport.install(reload_support=True, setup_args={'script_args':["--compiler=mingw32"]})

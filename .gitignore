@@ -54,3 +54,6 @@ tmp.py
 
 *.flann
 *.npz
+
+*_cython.c
+test_times.txt
