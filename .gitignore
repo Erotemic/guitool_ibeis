@@ -56,4 +56,5 @@ tmp.py
 *.npz
 
 *_cython.c
+*_cython.html
 test_times.txt

@@ -10,6 +10,10 @@ python setup.py develop
 
 ext_modules = utool.find_ext_modules(disable_warnings=True)
 
+#import os
+#os.environ['CC'] = 'g++'
+#os.environ['CXX'] = 'g++'
+
 INSTALL_REQUIRES = [
     #'PyQt4'  # non pipi index
 ]
@@ -28,6 +32,7 @@ if __name__ == '__main__':
         keywords='',
         package_data={},
         classifiers=[],
+        #language='c',
         author='Jon Crall',
         install_requires=INSTALL_REQUIRES,
         author_email='erotemic@gmail.com',
