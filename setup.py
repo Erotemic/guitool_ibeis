@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     kwargs = setuptools_setup(
         name='guitool',
+        packages=['guitool', 'guitool.__PYQT__'],
         description=('Guitool - tools pyqt4 guis'),
         url='https://github.com/Erotemic/guitool',
         ext_modules=ext_modules,
