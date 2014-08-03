@@ -15,7 +15,7 @@ ext_modules = utool.find_ext_modules(disable_warnings=True)
 #os.environ['CXX'] = 'g++'
 
 INSTALL_REQUIRES = [
-    #'PyQt4'  # non pipi index
+    #'PyQt 4/5'  # non pipi index
 ]
 
 if __name__ == '__main__':
