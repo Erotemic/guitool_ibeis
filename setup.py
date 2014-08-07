@@ -1,14 +1,13 @@
 #!/usr/bin/env python2.7
 from __future__ import absolute_import, division, print_function
 from setuptools import setup
-from Cython.Distutils import build_ext
-import utool
+from utool import util_setup
 """
 python setup.py build_ext --inplace
 python setup.py develop
 """
 
-ext_modules = utool.find_ext_modules(disable_warnings=True)
+ext_modules = util_setup.find_ext_modules(disable_warnings=True)
 
 #import os
 #os.environ['CC'] = 'g++'
@@ -19,17 +18,14 @@ INSTALL_REQUIRES = [
 ]
 
 if __name__ == '__main__':
-    #import pyximport; pyximport.install(reload_support=True, setup_args={'script_args':["--compiler=mingw32"]})
-    from utool.util_setup import setuptools_setup
-    #import pyximport; pyximport.install()  # NOQA
 
-    kwargs = setuptools_setup(
+    kwargs = util_setup.setuptools_setup(
         name='guitool',
         packages=['guitool', 'guitool.__PYQT__'],
         description=('Guitool - tools pyqt4 guis'),
         url='https://github.com/Erotemic/guitool',
         ext_modules=ext_modules,
-        cmdclass={'build_ext': build_ext},
+        cmdclass=util_setup.get_cmdclass(),
         keywords='',
         package_data={},
         classifiers=[],
@@ -40,3 +36,8 @@ if __name__ == '__main__':
         setup_fpath=__file__,
     )
     setup(**kwargs)
+
+
+#import pyximport; pyximport.install(reload_support=True, setup_args={'script_args':["--compiler=mingw32"]})
+#from utool.util_setup import setuptools_setup
+#import pyximport; pyximport.install()  # NOQA
