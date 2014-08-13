@@ -58,3 +58,11 @@ tmp.py
 *_cython.c
 *_cython.html
 test_times.txt
+
+failed.txt
+_*_cyth.pyx
+_*_cyth.c
+
+*_cyth_bench.py
+
+run_cyth_benchmarks.sh
