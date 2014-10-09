@@ -1,0 +1,30 @@
+guitool.__PYQT__ package
+========================
+
+Submodules
+----------
+
+guitool.__PYQT__.QtCore module
+------------------------------
+
+.. automodule:: guitool.__PYQT__.QtCore
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+guitool.__PYQT__.QtGui module
+-----------------------------
+
+.. automodule:: guitool.__PYQT__.QtGui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: guitool.__PYQT__
+    :members:
+    :undoc-members:
+    :show-inheritance:

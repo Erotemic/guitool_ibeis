@@ -1,6 +1,13 @@
 guitool package
 ===============
 
+Subpackages
+-----------
+
+.. toctree::
+
+    guitool.__PYQT__
+
 Submodules
 ----------
 
@@ -8,6 +15,14 @@ guitool.PreferenceWidget module
 -------------------------------
 
 .. automodule:: guitool.PreferenceWidget
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+guitool._api_tree_node_cython module
+------------------------------------
+
+.. automodule:: guitool._api_tree_node_cython
     :members:
     :undoc-members:
     :show-inheritance:
