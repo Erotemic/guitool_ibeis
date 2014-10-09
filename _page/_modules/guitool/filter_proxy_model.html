@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>guitool.filter_proxy_model &mdash; guitool 1.0.0.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="guitool 1.0.0.dev1 documentation" href="../../index.html" />
+    <link rel="up" title="guitool" href="../guitool.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" accesskey="U">guitool</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for guitool.filter_proxy_model</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>  <span class="c"># NOQA</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">import</span> <span class="nn">utool</span>
+
+<span class="c">#BASE_CLASS = QtGui.QAbstractProxyModel</span>
+<span class="n">BASE_CLASS</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span>
+<span class="c"># BASE_CLASS = QtGui.QIdentityProxyModel</span>
+
+
+<div class="viewcode-block" id="FilterProxyModel"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FilterProxyModel</span><span class="p">(</span><span class="n">BASE_CLASS</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">makeForwardingMetaclass</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">(),</span>
+        <span class="p">[</span><span class="s">&#39;_set_context_id&#39;</span><span class="p">,</span> <span class="s">&#39;_get_context_id&#39;</span><span class="p">,</span> <span class="s">&#39;_set_changeblocked&#39;</span><span class="p">,</span>
+         <span class="s">&#39;_get_changeblocked&#39;</span><span class="p">,</span> <span class="s">&#39;_about_to_change&#39;</span><span class="p">,</span> <span class="s">&#39;_change&#39;</span><span class="p">,</span> <span class="s">&#39;_update&#39;</span><span class="p">,</span>
+         <span class="s">&#39;_rows_updated&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;get_header_name&#39;</span><span class="p">],</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">BASE_CLASS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">BASE_CLASS</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="FilterProxyModel.proxy_to_source"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.proxy_to_source">[docs]</a>    <span class="k">def</span> <span class="nf">proxy_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()):</span>
+        <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span>
+        <span class="k">return</span> <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.source_to_proxy"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.source_to_proxy">[docs]</a>    <span class="k">def</span> <span class="nf">source_to_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()):</span>
+        <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span>
+        <span class="k">return</span> <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.mapToSource"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.mapToSource">[docs]</a>    <span class="k">def</span> <span class="nf">mapToSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxyIndex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns index into original model &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">proxyIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">proxyIndex</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_to_source</span><span class="p">(</span><span class="n">proxyIndex</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">proxyIndex</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
+            <span class="n">sourceIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">p2</span><span class="p">)</span>  <span class="c"># self.sourceModel().root_node[r2]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sourceIndex</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">sourceIndex</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.mapFromSource"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.mapFromSource">[docs]</a>    <span class="k">def</span> <span class="nf">mapFromSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sourceIndex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns index into proxy model &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sourceIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">sourceIndex</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_to_proxy</span><span class="p">(</span><span class="n">sourceIndex</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">sourceIndex</span><span class="o">.</span><span class="n">column</span><span class="p">(),</span> <span class="n">sourceIndex</span><span class="o">.</span><span class="n">parent</span><span class="p">())</span>
+            <span class="n">proxyIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proxyIndex</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">proxyIndex</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.filterAcceptsRow"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.filterAcceptsRow">[docs]</a>    <span class="k">def</span> <span class="nf">filterAcceptsRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_row</span><span class="p">,</span> <span class="n">source_parent</span><span class="p">):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
+        <span class="n">row_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">source_row</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">source_parent</span><span class="p">)))</span>
+        <span class="c">#print(&#39;%r \&#39;%r\&#39;&#39; % (source_row, row_type))</span>
+        <span class="c">#print(self.filter_dict)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row_type</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="c">#print(&#39;return value %r&#39; % rv)</span>
+        <span class="k">return</span> <span class="n">rv</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.index"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">proxyIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proxyIndex</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">proxyIndex</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.data"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxyIndex</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">sourceIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">proxyIndex</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">sourceIndex</span><span class="p">,</span> <span class="n">role</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.setData"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxyIndex</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
+        <span class="n">sourceIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">proxyIndex</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">sourceIndex</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.sort"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.parent"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.get_header_data"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.get_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colname</span><span class="p">,</span> <span class="n">proxyIndex</span><span class="p">):</span>
+        <span class="c">#print(&#39;[guitool] calling default map to source&#39;)</span>
+        <span class="c">#print(&#39;[guitool] proxyIndex=%r&#39; % proxyIndex)</span>
+        <span class="c">#proxy_keys = dir(proxyIndex)</span>
+        <span class="c">#proxy_vals = [getattr(proxyIndex, key) for key in proxy_keys]</span>
+        <span class="c">#proxy_dict = dict(zip(proxy_keys, proxy_vals))</span>
+        <span class="c">#print(&#39;[guitool] proxyIndex.__dict__=%s&#39; % utool.dict_str(proxy_dict))</span>
+        <span class="c">#utool.embed()</span>
+        <span class="c">#sourceIndex = BASE_CLASS.mapToSource(self, proxyIndex)</span>
+        <span class="n">sourceIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">proxyIndex</span><span class="p">)</span>
+        <span class="c">#print(&#39;[guitool] calling set header&#39;)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">get_header_data</span><span class="p">(</span><span class="n">colname</span><span class="p">,</span> <span class="n">sourceIndex</span><span class="p">)</span>
+        <span class="c">#print(&#39;[guitool] finished&#39;)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="FilterProxyModel.update_filterdict"><a class="viewcode-back" href="../../guitool.html#guitool.filter_proxy_model.FilterProxyModel.update_filterdict">[docs]</a>    <span class="k">def</span> <span class="nf">update_filterdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_dict</span> <span class="o">=</span> <span class="n">new_dict</span>
+</div>
+    <span class="k">def</span> <span class="nf">_update_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">_update_rows</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_row_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxyIndex</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">_get_row_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">proxyIndex</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" >guitool</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jon Crall.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>guitool.guitool_dialogs &mdash; guitool 1.0.0.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="guitool 1.0.0.dev1 documentation" href="../../index.html" />
+    <link rel="up" title="guitool" href="../guitool.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" accesskey="U">guitool</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for guitool.guitool_dialogs</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">map</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>  <span class="c"># NOQA</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">split</span>
+<span class="c"># UTool</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">utool</span>
+<span class="kn">from</span> <span class="nn">utool</span> <span class="kn">import</span> <span class="n">util_cache</span><span class="p">,</span> <span class="n">util_path</span>
+
+
+<span class="n">SELDIR_CACHEID</span> <span class="o">=</span> <span class="s">&#39;guitool_selected_directory&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">_guitool_cache_write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Writes to global IBEIS cache &quot;&quot;&quot;</span>
+    <span class="n">util_cache</span><span class="o">.</span><span class="n">global_cache_write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="s">&#39;ibeis&#39;</span><span class="p">)</span>  <span class="c"># HACK, user should specify appname</span>
+
+
+<span class="k">def</span> <span class="nf">_guitool_cache_read</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads from global IBEIS cache &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">util_cache</span><span class="o">.</span><span class="n">global_cache_read</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="s">&#39;ibeis&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c"># HACK, user should specify appname</span>
+
+
+<div class="viewcode-block" id="user_option"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.user_option">[docs]</a><span class="k">def</span> <span class="nf">user_option</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&#39;msg&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;user_option&#39;</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;No&#39;</span><span class="p">,</span> <span class="s">&#39;Yes&#39;</span><span class="p">],</span> <span class="n">use_cache</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Prompts user with several options with ability to save decision &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[*guitools] user_option:</span><span class="se">\n</span><span class="s"> </span><span class="si">%r</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+    <span class="c"># Recall decision</span>
+    <span class="n">cache_id</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="n">msg</span>
+    <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="n">_guitool_cache_read</span><span class="p">(</span><span class="n">cache_id</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reply</span>
+    <span class="c"># Create message box</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="n">_newMsgBox</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">_addOptions</span><span class="p">(</span><span class="n">msgbox</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
+        <span class="c"># Add a remember me option if caching is on</span>
+        <span class="n">dontPrompt</span> <span class="o">=</span> <span class="n">_cacheReply</span><span class="p">(</span><span class="n">msgbox</span><span class="p">)</span>
+    <span class="c"># Wait for output</span>
+    <span class="n">optx</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">optx</span> <span class="o">==</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">:</span>
+        <span class="c"># User Canceled</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># User Selected an option</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="n">optx</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="c"># This should be unreachable code.</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[*guitools] USER OPTION EXCEPTION !&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[*guitools] optx = </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">optx</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[*guitools] options = </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">options</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[*guitools] ex = </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">ex</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="c"># Remember decision if caching is on</span>
+    <span class="k">if</span> <span class="n">use_cache</span> <span class="ow">and</span> <span class="n">dontPrompt</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+        <span class="n">_guitool_cache_write</span><span class="p">(</span><span class="n">cache_id</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+    <span class="c"># Close the message box</span>
+    <span class="k">del</span> <span class="n">msgbox</span>
+    <span class="k">return</span> <span class="n">reply</span>
+
+</div>
+<div class="viewcode-block" id="user_input"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.user_input">[docs]</a><span class="k">def</span> <span class="nf">user_input</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&#39;msg&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;user_input&#39;</span><span class="p">):</span>
+    <span class="n">reply</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="user_info"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.user_info">[docs]</a><span class="k">def</span> <span class="nf">user_info</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&#39;msg&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;user_info&#39;</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;[dlg.user_info] title=</span><span class="si">%r</span><span class="s">, msg=</span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="n">_newMsgBox</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_DeleteOnClose</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">msgbox</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="user_question"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.user_question">[docs]</a><span class="k">def</span> <span class="nf">user_question</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;user_question&#39;</span><span class="p">)</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;lovely day?&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgbox</span>
+
+</div>
+<div class="viewcode-block" id="select_directory"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.select_directory">[docs]</a><span class="k">def</span> <span class="nf">select_directory</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="s">&#39;Select Directory&#39;</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">caption</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">directory_</span> <span class="o">=</span> <span class="n">_guitool_cache_read</span><span class="p">(</span><span class="n">SELDIR_CACHEID</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">directory_</span>
+    <span class="n">qdlg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="p">()</span>
+    <span class="c"># hack to fix the dialog window on ubuntu</span>
+    <span class="k">if</span> <span class="s">&#39;ubuntu&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">qopt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">ShowDirsOnly</span> <span class="o">|</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">DontUseNativeDialog</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qopt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">ShowDirsOnly</span>
+    <span class="n">qtkw</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;caption&#39;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span>
+        <span class="s">&#39;options&#39;</span><span class="p">:</span> <span class="n">qopt</span><span class="p">,</span>
+        <span class="s">&#39;directory&#39;</span><span class="p">:</span> <span class="n">directory_</span>
+    <span class="p">}</span>
+    <span class="n">dpath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">qdlg</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">qtkw</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;dpath = </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">dpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dpath</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">or</span> <span class="n">dpath</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dpath</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">dpath</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_guitool_cache_write</span><span class="p">(</span><span class="n">SELDIR_CACHEID</span><span class="p">,</span> <span class="n">split</span><span class="p">(</span><span class="n">dpath</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Selected Directory: </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">dpath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dpath</span>
+
+</div>
+<div class="viewcode-block" id="select_images"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.select_images">[docs]</a><span class="k">def</span> <span class="nf">select_images</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="s">&#39;Select images:&#39;</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">name_filter</span> <span class="o">=</span> <span class="n">_getQtImageNameFilter</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">select_files</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">name_filter</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="select_files"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.select_files">[docs]</a><span class="k">def</span> <span class="nf">select_files</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="s">&#39;Select Files:&#39;</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name_filter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="s">&#39;Selects one or more files from disk using a qt dialog&#39;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">caption</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">_guitool_cache_read</span><span class="p">(</span><span class="n">SELDIR_CACHEID</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">qdlg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="p">()</span>
+    <span class="n">qfile_list</span> <span class="o">=</span> <span class="n">qdlg</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">caption</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">name_filter</span><span class="p">)</span>
+    <span class="n">file_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">qfile_list</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Selected </span><span class="si">%d</span><span class="s"> files&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_list</span><span class="p">))</span>
+    <span class="n">_guitool_cache_write</span><span class="p">(</span><span class="n">SELDIR_CACHEID</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file_list</span>
+
+<span class="c"># Prevent messageboxes from being garbage collected</span></div>
+<span class="n">__MESSAGE_BOXES__</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">_register_msgbox</span><span class="p">(</span><span class="n">msgbox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Dont let the message box lose scope &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__MESSAGE_BOXES__</span>
+    <span class="n">__MESSAGE_BOXES__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msgbox</span><span class="p">)</span>
+    <span class="nd">@QtCore.pyqtSlot</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_close_msgbox</span><span class="p">(</span><span class="n">qobj</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">__MESSAGE_BOXES__</span>
+        <span class="n">__MESSAGE_BOXES__</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">msgbox</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">destroyed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_close_msgbox</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="msgbox"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.msgbox">[docs]</a><span class="k">def</span> <span class="nf">msgbox</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;msgbox&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Make a non modal critical QtGui.QMessageBox. &quot;&quot;&quot;</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_DeleteOnClose</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">msgbox</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">_register_msgbox</span><span class="p">(</span><span class="n">msgbox</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgbox</span>
+
+</div>
+<div class="viewcode-block" id="popup_menu"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.popup_menu">[docs]</a><span class="k">def</span> <span class="nf">popup_menu</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">opt2_callback</span><span class="p">):</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="ow">in</span> <span class="n">opt2_callback</span><span class="p">]</span>
+    <span class="n">selection</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">selection</span><span class="p">,</span> <span class="n">actions</span>
+    <span class="c">#pos=QtGui.QCursor.pos()</span>
+
+</div>
+<div class="viewcode-block" id="connect_context_menu"><a class="viewcode-back" href="../../guitool.html#guitool.guitool_dialogs.connect_context_menu">[docs]</a><span class="k">def</span> <span class="nf">connect_context_menu</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">opt2_callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">popup_slot</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">popup_menu</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">opt2_callback</span><span class="p">)</span>
+    <span class="c"># Remove other context menus from this widget</span>
+    <span class="k">for</span> <span class="n">_slot</span> <span class="ow">in</span> <span class="n">_get_scope</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s">&#39;_popup_scope&#39;</span><span class="p">):</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">_slot</span><span class="p">)</span>
+    <span class="n">_clear_scope</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s">&#39;_popup_scope&#39;</span><span class="p">)</span>
+    <span class="c"># Enable custom context menus to be requested</span>
+    <span class="n">widget</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+    <span class="c"># Connect our context slot</span>
+    <span class="n">widget</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">popup_slot</span><span class="p">)</span>
+    <span class="c"># Make sure popup_slot does not lose scope.</span>
+    <span class="n">_enforce_scope</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">popup_slot</span><span class="p">,</span> <span class="s">&#39;_popup_scope&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">popup_slot</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_get_scope</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="o">=</span><span class="s">&#39;_scope_list&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Helper for ensuring qt objects are not garbage collected &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_clear_scope</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="o">=</span><span class="s">&#39;_scope_list&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Helper for ensuring qt objects are not garbage collected &quot;&quot;&quot;</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="p">,</span> <span class="p">[])</span>
+
+
+<span class="k">def</span> <span class="nf">_enforce_scope</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scoped_obj</span><span class="p">,</span> <span class="n">scope_title</span><span class="o">=</span><span class="s">&#39;_scope_list&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Helper for ensuring qt objects are not garbage collected &quot;&quot;&quot;</span>
+    <span class="n">_get_scope</span><span class="p">(</span><span class="n">qobj</span><span class="p">,</span> <span class="n">scope_title</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scoped_obj</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_addOptions</span><span class="p">(</span><span class="n">msgbox</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="c">#msgbox.addButton(QtGui.QMessageBox.Close)</span>
+    <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">ApplyRole</span>
+        <span class="n">msgbox</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">opt</span><span class="p">),</span> <span class="n">role</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_cacheReply</span><span class="p">(</span><span class="n">msgbox</span><span class="p">):</span>
+    <span class="n">dontPrompt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s">&#39;dont ask me again&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">msgbox</span><span class="p">)</span>
+    <span class="n">dontPrompt</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">dontPrompt</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">ActionRole</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dontPrompt</span>
+
+
+<span class="k">def</span> <span class="nf">_newMsgBox</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cache_reply</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+    <span class="c">#msgbox.setAttribute(QtCore.Qt.WA_DeleteOnClose)</span>
+    <span class="c">#std_buts = QtGui.QMessageBox.Close</span>
+    <span class="c">#std_buts = QtGui.QMessageBox.NoButton</span>
+    <span class="n">std_buts</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">std_buts</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">msgbox</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgbox</span>
+
+
+<span class="k">def</span> <span class="nf">_getQtImageNameFilter</span><span class="p">():</span>
+    <span class="n">imgNamePat</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;*&#39;</span> <span class="o">+</span> <span class="n">ext</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">util_path</span><span class="o">.</span><span class="n">IMG_EXTENSIONS</span><span class="p">])</span>
+    <span class="n">imgNameFilter</span> <span class="o">=</span> <span class="s">&#39;Images (</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">imgNamePat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">imgNameFilter</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" >guitool</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jon Crall.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
