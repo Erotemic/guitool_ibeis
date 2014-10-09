@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>guitool.api_table_view &mdash; guitool 1.0.0.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="guitool 1.0.0.dev1 documentation" href="../../index.html" />
+    <link rel="up" title="guitool" href="../guitool.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" accesskey="U">guitool</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for guitool.api_table_view</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">guitool</span> <span class="kn">import</span> <span class="n">api_item_view</span>
+<span class="kn">from</span> <span class="nn">guitool.guitool_decorators</span> <span class="kn">import</span> <span class="n">signal_</span><span class="p">,</span> <span class="n">slot_</span>
+<span class="kn">import</span> <span class="nn">utool</span>
+
+<span class="p">(</span><span class="k">print</span><span class="p">,</span> <span class="n">print_</span><span class="p">,</span> <span class="n">printDBG</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span>
+    <span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;[APITableView]&#39;</span><span class="p">,</span> <span class="n">DEBUG</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+
+<span class="c"># If you need to set the selected index try:</span>
+<span class="c"># AbstractItemView::setCurrentIndex</span>
+<span class="c"># AbstractItemView::scrollTo</span>
+<span class="c"># AbstractItemView::keyboardSearch</span>
+
+<span class="n">API_VIEW_BASE</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTableView</span>
+<span class="c">#API_VIEW_BASE = QtGui.QAbstractItemView</span>
+
+
+<div class="viewcode-block" id="APITableView"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView">[docs]</a><span class="k">class</span> <span class="nc">APITableView</span><span class="p">(</span><span class="n">API_VIEW_BASE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Table view of API data.</span>
+<span class="sd">    Implicitly inherits from APIItemView</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rows_updated</span> <span class="o">=</span> <span class="n">signal_</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+    <span class="n">contextMenuClicked</span> <span class="o">=</span> <span class="n">signal_</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span>
+    <span class="n">API_VIEW_BASE</span> <span class="o">=</span> <span class="n">API_VIEW_BASE</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># Qt Inheritance</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="c"># Implicitly inject common APIItemView functions</span>
+        <span class="n">api_item_view</span><span class="o">.</span><span class="n">injectviewinstance</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+        <span class="c"># Allow sorting by column</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">_init_table_behavior</span><span class="p">()</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">_init_header_behavior</span><span class="p">()</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">col_hidden_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># Context menu</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">on_customMenuRequested</span><span class="p">)</span>
+
+    <span class="c">#---------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#---------------</span>
+
+    <span class="k">def</span> <span class="nf">_init_table_behavior</span><span class="p">(</span><span class="n">view</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Table behavior &quot;&quot;&quot;</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setCornerButtonEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setSortingEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setShowGrid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c"># Selection behavior</span>
+        <span class="c">#view.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)</span>
+        <span class="c">#view.setSelectionBehavior(QtGui.QAbstractItemView.SelectColumns)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectItems</span><span class="p">)</span>
+
+        <span class="c"># Selection behavior</span>
+        <span class="c"># view.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)</span>
+        <span class="c"># view.setSelectionMode(QtGui.QAbstractItemView.ContiguousSelection)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">ExtendedSelection</span><span class="p">)</span>
+        <span class="c"># view.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)</span>
+        <span class="c">#view.setSelectionMode(QtGui.QAbstractItemView.NoSelection)</span>
+
+        <span class="c"># Edit Triggers</span>
+        <span class="c">#view.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)  # No Editing</span>
+        <span class="c">#view.setEditTriggers(QtGui.QAbstractItemView.SelectedClicked)</span>
+        <span class="c">#QtGui.QAbstractItemView.NoEditTriggers  |  # 0</span>
+        <span class="c">#QtGui.QAbstractItemView.CurrentChanged  |  # 1</span>
+        <span class="c">#QtGui.QAbstractItemView.DoubleClicked   |  # 2</span>
+        <span class="c">#QtGui.QtGui.QAbstractItemView.SelectedClicked |  # 4</span>
+        <span class="c">#QtGui.QAbstractItemView.EditKeyPressed  |  # 8</span>
+        <span class="c">#QtGui.QAbstractItemView.AnyKeyPressed      # 16</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">_defaultEditTriggers</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">AllEditTriggers</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">_defaultEditTriggers</span><span class="p">)</span>
+        <span class="c"># TODO: Figure out how to not edit when you are selecting</span>
+        <span class="c">#view.setEditTriggers(QtGui.QAbstractItemView.AllEditTriggers)</span>
+
+        <span class="n">view</span><span class="o">.</span><span class="n">setIconSize</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_init_header_behavior</span><span class="p">(</span><span class="n">view</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Header behavior &quot;&quot;&quot;</span>
+        <span class="c"># Row Headers</span>
+        <span class="n">verticalHeader</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span>
+        <span class="n">verticalHeader</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="c">#verticalHeader.setSortIndicatorShown(True)</span>
+        <span class="n">verticalHeader</span><span class="o">.</span><span class="n">setHighlightSections</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">verticalHeader</span><span class="o">.</span><span class="n">setResizeMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Interactive</span><span class="p">)</span>
+        <span class="n">verticalHeader</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c"># Column headers</span>
+        <span class="n">horizontalHeader</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setStretchLastSection</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setSortIndicatorShown</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setHighlightSections</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="c"># Column Sizes</span>
+        <span class="c"># DO NOT USE RESIZETOCONTENTS. IT MAKES THINGS VERY SLOW</span>
+        <span class="c">#horizontalHeader.setResizeMode(QtGui.QHeaderView.ResizeToContents)</span>
+        <span class="c">#horizontalHeader.setResizeMode(QtGui.QHeaderView.Stretch)</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setResizeMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Interactive</span><span class="p">)</span>
+        <span class="c">#horizontalHeader.setCascadingSectionResizes(True)</span>
+        <span class="c"># Columns moveable</span>
+        <span class="n">horizontalHeader</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#---------------</span>
+    <span class="c"># Qt Overrides</span>
+    <span class="c">#---------------</span>
+
+<div class="viewcode-block" id="APITableView.setModel"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.setModel">[docs]</a>    <span class="k">def</span> <span class="nf">setModel</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; QtOverride: Returns item delegate for this index &quot;&quot;&quot;</span>
+        <span class="n">api_item_view</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="APITableView.keyPressEvent"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QKeyEvent</span><span class="p">)</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QKeySequence</span><span class="o">.</span><span class="n">Copy</span><span class="p">):</span>
+            <span class="c">#print(&#39;Received Ctrl+C in View&#39;)</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">copy_selection_to_clipboard</span><span class="p">()</span>
+        <span class="c">#print (&#39;[view] keyPressEvent: %s&#39; % event.key())</span>
+</div>
+<div class="viewcode-block" id="APITableView.mouseMoveEvent"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.mouseMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="APITableView.mousePressEvent"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+        <span class="c">#print(&#39;no editing&#39;)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">NoEditTriggers</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="APITableView.mouseReleaseEvent"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.mouseReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span>
+        <span class="c">#print(&#39;editing ok&#39;)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">_defaultEditTriggers</span><span class="p">)</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="APITableView.clearSelection"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.clearSelection">[docs]</a>    <span class="k">def</span> <span class="nf">clearSelection</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[table_view] clear selection&#39;</span><span class="p">)</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c">#---------------</span>
+    <span class="c"># Slots</span>
+    <span class="c">#---------------</span>
+</div>
+    <span class="nd">@slot_</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<div class="viewcode-block" id="APITableView.on_rows_updated"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.on_rows_updated">[docs]</a>    <span class="k">def</span> <span class="nf">on_rows_updated</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">tblname</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+        <span class="c"># re-emit the model signal</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">rows_updated</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">tblname</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+</div>
+    <span class="nd">@slot_</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span>
+<div class="viewcode-block" id="APITableView.on_customMenuRequested"><a class="viewcode-back" href="../../guitool.html#guitool.api_table_view.APITableView.on_customMenuRequested">[docs]</a>    <span class="k">def</span> <span class="nf">on_customMenuRequested</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">contextMenuClicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" >guitool</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jon Crall.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

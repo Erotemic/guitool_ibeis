@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>guitool.api_item_view &mdash; guitool 1.0.0.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="guitool 1.0.0.dev1 documentation" href="../../index.html" />
+    <link rel="up" title="guitool" href="../guitool.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" accesskey="U">guitool</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for guitool.api_item_view</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">.__PYQT__.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">guitool</span> <span class="kn">import</span> <span class="n">qtype</span>
+<span class="kn">from</span> <span class="nn">guitool.api_thumb_delegate</span> <span class="kn">import</span> <span class="n">APIThumbDelegate</span>
+<span class="kn">from</span> <span class="nn">guitool.api_button_delegate</span> <span class="kn">import</span> <span class="n">APIButtonDelegate</span>
+<span class="c">#import guitool</span>
+<span class="c">#from guitool.guitool_decorators import signal_, slot_</span>
+<span class="kn">from</span> <span class="nn">guitool.guitool_main</span> <span class="kn">import</span> <span class="n">get_qtapp</span>
+<span class="kn">from</span> <span class="nn">guitool.guitool_misc</span> <span class="kn">import</span> <span class="n">get_view_selection_as_str</span>
+<span class="kn">import</span> <span class="nn">utool</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="c"># Valid API Models</span>
+<span class="kn">from</span> <span class="nn">guitool.stripe_proxy_model</span> <span class="kn">import</span> <span class="n">StripeProxyModel</span>
+<span class="kn">from</span> <span class="nn">guitool.filter_proxy_model</span> <span class="kn">import</span> <span class="n">FilterProxyModel</span>
+<span class="kn">from</span> <span class="nn">guitool.api_item_model</span> <span class="kn">import</span> <span class="n">APIItemModel</span>
+
+<span class="p">(</span><span class="k">print</span><span class="p">,</span> <span class="n">print_</span><span class="p">,</span> <span class="n">printDBG</span><span class="p">,</span> <span class="n">rrr</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span>
+    <span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;[APIItemView]&#39;</span><span class="p">,</span> <span class="n">DEBUG</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span>
+
+<span class="n">API_VIEW_BASE</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span>
+<span class="n">viewmember</span> <span class="o">=</span> <span class="n">utool</span><span class="o">.</span><span class="n">classmember</span><span class="p">(</span><span class="n">API_VIEW_BASE</span><span class="p">)</span>
+<span class="n">injectviewinstance</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">utool</span><span class="o">.</span><span class="n">inject_instance</span><span class="p">,</span> <span class="n">API_VIEW_BASE</span><span class="p">)</span>
+
+
+<span class="n">VALID_API_MODELS</span> <span class="o">=</span> <span class="p">(</span><span class="n">FilterProxyModel</span><span class="p">,</span> <span class="n">StripeProxyModel</span><span class="p">,</span> <span class="n">APIItemModel</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="APIItemView"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.APIItemView">[docs]</a><span class="k">class</span> <span class="nc">APIItemView</span><span class="p">(</span><span class="n">API_VIEW_BASE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trees and Tables implicitly inherit from this class.</span>
+<span class="sd">    Abstractish class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+<span class="c">#---------------</span>
+<span class="c"># Data Manipulation</span>
+<span class="c">#---------------</span>
+
+</div>
+<span class="nd">@viewmember</span>
+<div class="viewcode-block" id="infer_delegates"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.infer_delegates">[docs]</a><span class="k">def</span> <span class="nf">infer_delegates</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="o">**</span><span class="n">headers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Infers which columns should be given item delegates &quot;&quot;&quot;</span>
+    <span class="n">col_type_list</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;col_type_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">num_cols</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">columnCount</span><span class="p">()</span>
+    <span class="n">num_duplicates</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_cols</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_type_list</span><span class="p">))</span>
+    <span class="n">col_type_list</span> <span class="o">=</span> <span class="n">col_type_list</span> <span class="o">*</span> <span class="n">num_duplicates</span>
+    <span class="k">for</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coltype</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col_type_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">coltype</span> <span class="ow">in</span>  <span class="n">qtype</span><span class="o">.</span><span class="n">QT_PIXMAP_TYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;[view] colx=</span><span class="si">%r</span><span class="s"> is a PIXMAP&#39;</span> <span class="o">%</span> <span class="n">colx</span><span class="p">)</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setItemDelegateForColumn</span><span class="p">(</span><span class="n">colx</span><span class="p">,</span> <span class="n">APIThumbDelegate</span><span class="p">(</span><span class="n">view</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">coltype</span> <span class="ow">in</span> <span class="n">qtype</span><span class="o">.</span><span class="n">QT_BUTTON_TYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;[view] colx=</span><span class="si">%r</span><span class="s"> is a BUTTON&#39;</span> <span class="o">%</span> <span class="n">colx</span><span class="p">)</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setItemDelegateForColumn</span><span class="p">(</span><span class="n">colx</span><span class="p">,</span> <span class="n">APIButtonDelegate</span><span class="p">(</span><span class="n">view</span><span class="p">))</span>
+
+</div>
+<span class="nd">@viewmember</span>
+<div class="viewcode-block" id="set_column_persistant_editor"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.set_column_persistant_editor">[docs]</a><span class="k">def</span> <span class="nf">set_column_persistant_editor</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Set each row in a column as persistant &quot;&quot;&quot;</span>
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;view.set_persistant: </span><span class="si">%r</span><span class="s"> rows&#39;</span> <span class="o">%</span> <span class="n">num_rows</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
+        <span class="n">index</span>  <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">openPersistentEditor</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+</div>
+<span class="nd">@viewmember</span>
+<span class="k">def</span> <span class="nf">_update_headers</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="o">**</span><span class="n">headers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Mirrors _update_headers in api_item_model &quot;&quot;&quot;</span>
+    <span class="c"># Use headers from model #model = view.model #headers = model.headers</span>
+    <span class="c"># Get header info</span>
+    <span class="n">col_sort_index</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;col_sort_index&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">col_sort_reverse</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;col_sort_reverse&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">col_hidden_list</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;col_hidden_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">col_name_list</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;col_name_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="c"># Call updates</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">_set_sort</span><span class="p">(</span><span class="n">col_sort_index</span><span class="p">,</span> <span class="n">col_sort_reverse</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">infer_delegates</span><span class="p">(</span><span class="o">**</span><span class="n">headers</span><span class="p">)</span>
+    <span class="c">#view.infer_delegates_from_model(model=model) #view.resizeColumnsToContents()</span>
+
+
+<span class="nd">@viewmember</span>
+<span class="k">def</span> <span class="nf">_set_sort</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">col_sort_index</span><span class="p">,</span> <span class="n">col_sort_reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">col_sort_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">Qt</span><span class="o">.</span><span class="n">AscendingOrder</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DescendingOrder</span><span class="p">][</span><span class="n">col_sort_reverse</span><span class="p">]</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">sortByColumn</span><span class="p">(</span><span class="n">col_sort_index</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+
+
+<span class="nd">@viewmember</span>
+<div class="viewcode-block" id="hide_cols"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.hide_cols">[docs]</a><span class="k">def</span> <span class="nf">hide_cols</span><span class="p">(</span><span class="n">view</span><span class="p">):</span>
+    <span class="n">total_num_cols</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">columnCount</span><span class="p">()</span>
+    <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">col_hidden_list</span><span class="p">)</span>
+    <span class="n">num_duplicates</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_num_cols</span> <span class="o">/</span> <span class="n">num_cols</span><span class="p">)</span>
+    <span class="n">duplicated_hidden_list</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">col_hidden_list</span> <span class="o">*</span> <span class="n">num_duplicates</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">hidden</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">duplicated_hidden_list</span><span class="p">):</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setColumnHidden</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+
+
+<span class="c">#---------------</span>
+<span class="c"># Qt Overrides</span>
+<span class="c">#---------------</span>
+
+</div>
+<span class="nd">@viewmember</span>
+<div class="viewcode-block" id="itemDelegate"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.itemDelegate">[docs]</a><span class="k">def</span> <span class="nf">itemDelegate</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">qindex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; QtOverride: Returns item delegate for this index &quot;&quot;&quot;</span>
+    <span class="c"># Does this even work? TODO: testme</span>
+    <span class="k">return</span> <span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">qindex</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="setModel"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.setModel">[docs]</a><span class="k">def</span> <span class="nf">setModel</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; QtOverride: Returns item delegate for this index &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">VALID_API_MODELS</span><span class="p">),</span>\
+            <span class="p">(</span><span class="s">&#39;APIItemViews only accepts APIItemModels (or one of its proxys),&#39;</span>
+             <span class="s">&#39;received a </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+    <span class="c"># Learn some things about the model before you fully connect it.</span>
+    <span class="k">if</span> <span class="n">utool</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[view] setting model&#39;</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">_rows_updated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">on_rows_updated</span><span class="p">)</span>
+    <span class="c">#view.infer_delegates_from_model(model=model)</span>
+    <span class="c"># TODO: Update headers</span>
+    <span class="k">return</span> <span class="n">view</span><span class="o">.</span><span class="n">API_VIEW_BASE</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+
+<span class="c">#---------------</span>
+<span class="c"># Slots</span>
+<span class="c">#---------------</span>
+
+</div>
+<span class="nd">@viewmember</span>
+<div class="viewcode-block" id="copy_selection_to_clipboard"><a class="viewcode-back" href="../../guitool.html#guitool.api_item_view.copy_selection_to_clipboard">[docs]</a><span class="k">def</span> <span class="nf">copy_selection_to_clipboard</span><span class="p">(</span><span class="n">view</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Copys selected grid to clipboard &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[guitool] Copying selection to clipboard&#39;</span><span class="p">)</span>
+    <span class="n">copy_str</span> <span class="o">=</span> <span class="n">get_view_selection_as_str</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+    <span class="c">#copy_qstr = QtCore.Q__String(copy_str)</span>
+    <span class="n">copy_qstr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">copy_str</span><span class="p">)</span>
+    <span class="n">clipboard</span> <span class="o">=</span> <span class="n">get_qtapp</span><span class="p">()</span><span class="o">.</span><span class="n">clipboard</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">copy_str</span><span class="p">)</span>
+    <span class="n">clipboard</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">copy_qstr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;[guitool] finished copy&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">guitool 1.0.0.dev1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../guitool.html" >guitool</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jon Crall.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
