@@ -11,6 +11,14 @@ from guitool import guitool_dialogs
                                                        '[guitool_components]')
 
 
+ALIGN_DICT = {
+    'center': Qt.AlignCenter,
+    'right': Qt.AlignRight | Qt.AlignVCenter,
+    'left': Qt.AlignLeft | Qt.AlignVCenter,
+    'justify': Qt.AlignJustify,
+}
+
+
 def newSizePolicy(widget,
                   verticalSizePolicy=QSizePolicy.Expanding,
                   horizontalSizePolicy=QSizePolicy.Expanding,
@@ -159,6 +167,7 @@ def newOutputLog(parent, pointSize=6, visible=True, verticalStretch=1):
 
 
 def newTextEdit(parent, visible=True):
+    """ This is a text area """
     outputEdit = QtGui.QTextEdit(parent)
     sizePolicy = newSizePolicy(outputEdit, verticalStretch=1)
     outputEdit.setSizePolicy(sizePolicy)
@@ -166,6 +175,39 @@ def newTextEdit(parent, visible=True):
     outputEdit.setVisible(visible)
     setattr(outputEdit, '_guitool_sizepolicy', sizePolicy)
     return outputEdit
+
+
+def newLineEdit(parent, text=None, enabled=True, align='center', textChangedSlot=None, visible=True, fontkw={}):
+    """ This is a text line
+
+    Example:
+        >>> # DISABLE_DOCTEST
+        >>> from guitool.guitool_components import *  # NOQA
+        >>> parent = None
+        >>> text = None
+        >>> visible = True
+        >>> # execute function
+        >>> widget = newLineEdit(parent, text, visible)
+        >>> # verify results
+        >>> result = str(widget)
+        >>> print(result)
+    """
+    widget = QtGui.QLineEdit(parent)
+    sizePolicy = newSizePolicy(widget, verticalStretch=1)
+    widget.setSizePolicy(sizePolicy)
+    if text is not None:
+        widget.setText(text)
+    widget.setEnabled(enabled)
+    widget.setAlignment(ALIGN_DICT[align])
+
+    if textChangedSlot is not None:
+        widget.textChangedSlot.connect(textChangedSlot)
+
+    #outputEdit.setAcceptRichText(False)
+    #outputEdit.setVisible(visible)
+    adjust_font(widget, **fontkw)
+    setattr(widget, '_guitool_sizepolicy', sizePolicy)
+    return widget
 
 
 def newWidget(parent, orientation=Qt.Vertical,
@@ -203,14 +245,60 @@ def newFont(fontname='Courier New', pointSize=-1, weight=-1, italic=False):
     return font
 
 
+def adjust_font(widget, bold=False, pointSize=None, italic=False):
+    if bold or pointSize is not None:
+        font = widget.font()
+        font.setBold(bold)
+        font.setItalic(italic)
+        if pointSize is not None:
+            font.setPointSize(pointSize)
+        widget.setFont(font)
+
+
 def newButton(parent=None, text='', clicked=None, qicon=None, visible=True,
-              enabled=True, bgcolor=None, fgcolor=None):
+              enabled=True, bgcolor=None, fgcolor=None, fontkw={}):
     """ wrapper around QtGui.QPushButton
     connectable signals:
         void clicked(bool checked=false)
         void pressed()
         void released()
         void toggled(bool checked)
+
+    Args:
+        parent (None):
+        text (str):
+        clicked (None):
+        qicon (None):
+        visible (bool):
+        enabled (bool):
+        bgcolor (None):
+        fgcolor (None):
+        bold (bool):
+
+    Returns:
+        ?: button
+
+    CommandLine:
+        python -m guitool.guitool_components --test-newButton
+
+    Example:
+        >>> # ENABLE_DOCTEST
+        >>> from guitool.guitool_components import *  # NOQA
+        >>> # build test data
+        >>> parent = None
+        >>> text = ''
+        >>> clicked = None
+        >>> qicon = None
+        >>> visible = True
+        >>> enabled = True
+        >>> bgcolor = None
+        >>> fgcolor = None
+        >>> bold = False
+        >>> # execute function
+        >>> button = newButton(parent, text, clicked, qicon, visible, enabled, bgcolor, fgcolor, bold)
+        >>> # verify results
+        >>> result = str(button)
+        >>> print(result)
     """
     but_args = [text]
     but_kwargs = {
@@ -228,11 +316,12 @@ def newButton(parent=None, text='', clicked=None, qicon=None, visible=True,
         button.setStyleSheet(style_sheet_str)
     button.setVisible(visible)
     button.setEnabled(enabled)
+    adjust_font(button, **fontkw)
     return button
 
 
 def newComboBox(parent=None, options=None, changed=None, default=None, visible=True,
-                enabled=True, bgcolor=None, fgcolor=None, bold=False):
+                enabled=True, bgcolor=None, fgcolor=None, fontkw={}):
     """ wrapper around QtGui.QComboBox
 
     Args:
@@ -316,10 +405,7 @@ def newComboBox(parent=None, options=None, changed=None, default=None, visible=T
         enabled = False
     combo.setVisible(visible)
     combo.setEnabled(enabled)
-    if True or bold:
-        font = combo.font()
-        font.setBold(True)
-        combo.setFont(font)
+    adjust_font(combo, **fontkw)
     return combo
 
 
@@ -375,19 +461,10 @@ def make_style_sheet(bgcolor=None, fgcolor=None):
 #    #app_style = QtGui.QApplication.style()
 
 
-def newLabel(parent=None, text='', align='center', bold=False):
+def newLabel(parent=None, text='', align='center', fontkw={}):
     label = QtGui.QLabel(text, parent=parent)
-    align_dict = {
-        'center': Qt.AlignCenter,
-        'right': Qt.AlignRight | Qt.AlignVCenter,
-        'left': Qt.AlignLeft | Qt.AlignVCenter,
-        'justify': Qt.AlignJustify,
-    }
-    label.setAlignment(align_dict[align])
-    if bold:
-        font = label.font()
-        font.setBold(True)
-        label.setFont(font)
+    label.setAlignment(ALIGN_DICT[align])
+    adjust_font(label, **fontkw)
     return label
 
 
@@ -416,7 +493,7 @@ def layoutSplitter(splitter):
 
 def msg_event(title, msg):
     """ Returns a message event slot """
-    return lambda: guitool_dialogs.msgbox(title, msg)
+    return lambda: guitool_dialogs.msgbox(msg=msg, title=title)
 
 
 if __name__ == '__main__':

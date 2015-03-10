@@ -117,7 +117,7 @@ class APIItemModel(API_MODEL_BASE):
         col_sort_reverse : boolean of if to reverse the sort ordering
     """
     _rows_updated = signal_(str, int)
-    EditableItemColor = QtGui.QColor(220, 220, 255)
+    EditableItemColor = QtGui.QColor(242, 242, 255)
     TrueItemColor     = QtGui.QColor(230, 250, 230)
     FalseItemColor    = QtGui.QColor(250, 230, 230)
 
@@ -214,7 +214,7 @@ class APIItemModel(API_MODEL_BASE):
     def _update_rows(model, rebuild_structure=True):
         """
         Uses the current ider and col_sort_index to create
-        row_indicies
+        row_indices
         """
         if VERBOSE:
             print('[APIItemModel] +-----------')
@@ -231,9 +231,9 @@ class APIItemModel(API_MODEL_BASE):
             return
         #old_root = model.root_node  # NOQA
         if rebuild_structure:
-            with utool.Timer('[%s] _update_rows: %r' %
-                             ('cyth' if _atn.CYTHONIZED else 'pyth',
-                              model.name,), newline=False):
+            #with utool.Timer('[%s] _update_rows: %r' %
+            #                 ('cyth' if _atn.CYTHONIZED else 'pyth',
+            #                  model.name,), newline=False):
                 model.root_node = _atn.build_internal_structure(model)
         #print('-----')
         #def lazy_update_rows():
@@ -247,7 +247,7 @@ class APIItemModel(API_MODEL_BASE):
             print('[APIItemModel] lazy_update_rows')
         model.level_index_list = []
         sort_index = 0 if model.col_sort_index is None else model.col_sort_index
-        print('sort_index=%r' % (sort_index,))
+        #print('[item_model] sort_index=%r' % (sort_index,))
         children = model.root_node.get_children()  # THIS IS THE LINE THAT TAKES FOREVER
         id_list = [child.get_id() for child in children]
         #print('ids_ generated')
@@ -478,13 +478,19 @@ class APIItemModel(API_MODEL_BASE):
         returns the row if an _id from the iders list
 
         Args:
-            _id (?):
+            _id (int): sqlrowid
 
         Returns:
             int: row
         """
         row = model.root_node.find_row_from_id(_id)
         return row
+
+    def get_row_and_qtindex_from_id(model, _id):
+        """ uses an sqlrowid (from iders) to get a qtindex """
+        row = model.get_row_from_id(_id)
+        qtindex = model.index(row, 0) if row is not None else None
+        return qtindex, row
 
     #----------------------------------
     # --- API Convineince Functions ---
@@ -559,13 +565,13 @@ class APIItemModel(API_MODEL_BASE):
             if utool.USE_ASSERT:
                 assert isinstance(node, _atn.TreeNode), type(node)
         except AssertionError as ex:
-            utool.printex(ex, key_list=['node'], separate=True)
+            utool.printex(ex, key_list=['node'], pad_stdout=True)
             raise
         # get node parent
         try:
             node_parent = node.get_parent()
         except Exception as ex:
-            utool.printex(ex, key_list=['node'], reraise=False, separate=True)
+            utool.printex(ex, key_list=['node'], reraise=False, pad_stdout=True)
             raise
         # parent_node check
         if node_parent is None:
