@@ -74,3 +74,5 @@ _doc
 *.c
 
 test_times.txt
+
+failed_doctests.txt
