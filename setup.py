@@ -15,6 +15,7 @@ ext_modules = util_setup.find_ext_modules(disable_warnings=True)
 
 INSTALL_REQUIRES = [
     #'PyQt 4/5'  # non pipi index
+    'cachetools',
 ]
 
 if __name__ == '__main__':
