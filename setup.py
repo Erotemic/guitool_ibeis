@@ -4,7 +4,7 @@ from setuptools import setup
 from utool import util_setup
 """
 python setup.py build_ext --inplace
-python setup.py develop
+pip install -e .
 """
 
 ext_modules = util_setup.find_ext_modules(disable_warnings=True)
@@ -15,18 +15,25 @@ ext_modules = util_setup.find_ext_modules(disable_warnings=True)
 
 INSTALL_REQUIRES = [
     #'PyQt 4/5'  # non pipi index
-    'cachetools',
+    'cachetools>=2.0.1',
 ]
 
-if __name__ == '__main__':
+try:
+    from Cython.Distutils import build_ext
+    cmdclass = {'build_ext': build_ext}
+except Exception as ex:
+    print(ex)
+    print('WARNING: Cython is not installed. This is only a problem if you are building C extensions')
+    cmdclass = {}
 
+if __name__ == '__main__':
     kwargs = util_setup.setuptools_setup(
         name='guitool',
         packages=['guitool', 'guitool.__PYQT__'],
         description=('Guitool - tools pyqt4 guis'),
         url='https://github.com/Erotemic/guitool',
         ext_modules=ext_modules,
-        cmdclass=util_setup.get_cmdclass(),
+        cmdclass=cmdclass,
         keywords='',
         package_data={},
         classifiers=[],
