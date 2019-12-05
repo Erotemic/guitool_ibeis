@@ -17,6 +17,8 @@ cache:
   directories:
   - $HOME/.cache/pip
   - $HOME/download
+  - $HOME/.pip-cache
+  - $HOME/gpg_install_prefix
 
 python:
   #- "2.7"
@@ -25,7 +27,7 @@ python:
   #
 before_install:
   - pip install pip -U
-  - pip install -r requirements.txt -U
+  - pip install -r requirements.txt
   - docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v2
 
 install:
@@ -35,9 +37,8 @@ install:
       echo "VERSION = $VERSION"
       echo "MB_PYTHON_TAG = $MB_PYTHON_TAG"
   - MB_PYTHON_TAG=$MB_PYTHON_TAG ./run_multibuild.sh
-  - |
-      BDIST_WHEEL_PATH=$(ls dist/*-$VERSION-$MB_PYTHON_TAG*.whl)
-      echo "BDIST_WHEEL_PATH = $BDIST_WHEEL_PATH"
+  - BDIST_WHEEL_PATH=$(ls dist/*-$VERSION-$MB_PYTHON_TAG*.whl)
+  - echo "BDIST_WHEEL_PATH = $BDIST_WHEEL_PATH"
   - pip install $BDIST_WHEEL_PATH
     
 script: 
@@ -193,3 +194,6 @@ cache:
     apt: true
     directories:
         - $HOME/.pip-cache
+        - $HOME/gpg_install_prefix
+        - $HOME/.cache/pip
+        - $HOME/download
