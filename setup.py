@@ -250,5 +250,8 @@ if __name__ == '__main__':
             KWARGS['name']: PACKAGE_DATA,
         },
     ))
-    import skbuild as skb
-    skb.setup(**KWARGS)
+    if '--universal' in sys.argv:
+        from setuptools import setup
+    else:
+        from skbuild import setup
+    setup(**KWARGS)
