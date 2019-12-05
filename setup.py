@@ -28,10 +28,10 @@ except Exception as ex:
 
 if __name__ == '__main__':
     kwargs = util_setup.setuptools_setup(
-        name='guitool',
-        packages=['guitool', 'guitool.__PYQT__'],
+        name='guitool_ibeis',
+        packages=['guitool_ibeis', 'guitool_ibeis.__PYQT__'],
         description=('Guitool - tools pyqt4 guis'),
-        url='https://github.com/Erotemic/guitool',
+        url='https://github.com/Erotemic/guitool_ibeis',
         ext_modules=ext_modules,
         cmdclass=cmdclass,
         keywords='',

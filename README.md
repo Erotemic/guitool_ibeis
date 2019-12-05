@@ -1,4 +1,6 @@
-guitool
-=======
+guitool_ibeis
+=============
 
-Helpers for pyqt4 gui development. (also not well coded.)
+Helpers for pyqt4/pyqt5 gui development for the IBEIS project.
+
+Depends on `vtool_ibeis` and `utool`.
