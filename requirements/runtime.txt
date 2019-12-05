@@ -1,0 +1,11 @@
+six >= 1.10.0
+ubelt 
+utool >= 2.0.0
+
+matplotlib
+
+vtool_ibeis >= 2.0.0
+pyqt5>= 5.11.2;python_version>'2.7'  # 
+
+cachetools>=2.0.1
+# sip
