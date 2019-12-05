@@ -27,7 +27,7 @@ Usage:
     source $(secret_loader.sh)
 
     # Interactive/Dry run
-    ./publish.sh 
+    DEPLOY_BRANCH=master DEPLOY_REMOTE=Erotemic ./publish.sh 
 
     # Non-Interactive run
     #./publish.sh yes
