@@ -73,6 +73,9 @@ run_cyth_benchmarks.sh
 _doc
 *.c
 
+failed_doctests.txt
+timeings.txt
 test_times.txt
 
-failed_doctests.txt
+wheelhouse
+_skbuild

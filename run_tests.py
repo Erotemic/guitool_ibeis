@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 from __future__ import absolute_import, division, print_function
 import sys
 import utool as ut
@@ -20,7 +20,7 @@ def run_tests():
         '_doc',
         'notebook',
     ]
-    dpath_list = ['guitool']
+    dpath_list = ['guitool_ibeis']
     doctest_modname_list = ut.find_doctestable_modnames(
         dpath_list, exclude_doctests_fnames, exclude_dirs)
 
