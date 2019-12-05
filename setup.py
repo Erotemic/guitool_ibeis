@@ -243,15 +243,15 @@ if __name__ == '__main__':
             (['Release\\*.dll'] if os.name == 'nt' else [])
             # ["LICENSE.txt", "LICENSE-3RD-PARTY.txt", "LICENSE.SIFT"]
     )
-    KWARGS.update(dict(
-        ext_modules=EmptyListWithLength(),  # hack for including ctypes bins
-        include_package_data=True,
-        package_data={
-            KWARGS['name']: PACKAGE_DATA,
-        },
-    ))
     if '--universal' in sys.argv:
         from setuptools import setup
     else:
         from skbuild import setup
+        KWARGS.update(dict(
+            ext_modules=EmptyListWithLength(),  # hack for including ctypes bins
+            include_package_data=True,
+            package_data={
+                KWARGS['name']: PACKAGE_DATA,
+            },
+        ))
     setup(**KWARGS)
