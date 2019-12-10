@@ -244,6 +244,8 @@ if __name__ == '__main__':
             # ["LICENSE.txt", "LICENSE-3RD-PARTY.txt", "LICENSE.SIFT"]
     )
     if '--universal' in sys.argv:
+        if 'develop' in sys.argv:
+            sys.argv.remove('--universal')
         from setuptools import setup
     else:
         from skbuild import setup
