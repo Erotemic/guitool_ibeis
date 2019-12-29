@@ -42,10 +42,10 @@ before_install:
 install:
   #- | 
   #    MB_PYTHON_TAG=$(python -c "import setup; print(setup.MB_PYTHON_TAG)") 
-  #    VERSION=$(python -c "import setup; print(setup.VERSION)") 
   #    echo "VERSION = $VERSION"
   #    echo "MB_PYTHON_TAG = $MB_PYTHON_TAG"
   #- MB_PYTHON_TAG=$MB_PYTHON_TAG ./run_manylinux_build.sh
+  - VERSION=$(python -c "import setup; print(setup.VERSION)") 
   - MB_PYTHON_TAG="py2.py3-none-any"
   - python setup.py bdist_wheel --universal
   - BDIST_WHEEL_PATH=$(ls dist/*-$VERSION-$MB_PYTHON_TAG*.whl)
