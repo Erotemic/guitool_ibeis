@@ -42,10 +42,10 @@ docker pull quay.io/erotemic/manylinux-opencv:manylinux1_i686-opencv4.1.0-py3.6
 """
 
 
-DOCKER_IMAGE=${DOCKER_IMAGE:="quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v2"}
+DOCKER_IMAGE=${DOCKER_IMAGE:="quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v4"}
 # Valid multibuild python versions are:
 # cp27-cp27m  cp27-cp27mu  cp34-cp34m  cp35-cp35m  cp36-cp36m  cp37-cp37m
-MB_PYTHON_TAG=${MB_PYTHON_TAG:=$(python -c "import setup; print(setup.MB_PYTHON_TAG)")}
+MB_PYTHON_TAG=${MB_PYTHON_TAG:=$(python -c "import setup; print(setup.native_mb_python_tag())")}
 NAME=${NAME:=$(python -c "import setup; print(setup.NAME)")}
 VERSION=${VERSION:=$(python -c "import setup; print(setup.VERSION)")}
 echo "
@@ -74,6 +74,14 @@ if [ "$_INSIDE_DOCKER" != "YES" ]; then
         -e NAME="$NAME" \
         -e VERSION="$VERSION" \
         -it $DOCKER_IMAGE bash
+
+    docker run --rm \
+        -v $PWD:/io \
+        -e _INSIDE_DOCKER="YES" \
+        -e MB_PYTHON_TAG="$MB_PYTHON_TAG" \
+        -e NAME="$NAME" \
+        -e VERSION="$VERSION" \
+        -it python:3.7 bash
 
     set +e
     set +x

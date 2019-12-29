@@ -12,6 +12,15 @@ dist: trusty
 language: python
 sudo: false
 
+#addons:
+#    apt:
+#      packages:
+#      # https://www.riverbankcomputing.com/pipermail/pyqt/2019-February/041363.html
+#      - libxkbcommon-x11-0
+
+services:
+  - xvfb
+
 cache:
   apt: true
   directories:
@@ -44,7 +53,10 @@ install:
   - pip install $BDIST_WHEEL_PATH
     
 script: 
-  - travis_wait ./run_doctests.sh
+# https://stackoverflow.com/questions/37662616/create-a-pyqt-build-in-gitlab/55442821#55442821
+# https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI
+# https://stackoverflow.com/questions/43267318/travis-ci-pyqt-application-creation-failure
+  - travis_wait ./run_doctests.sh -platform offscreen
 
 after_success: 
     - codecov 
