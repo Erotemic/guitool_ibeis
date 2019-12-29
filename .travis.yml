@@ -1,11 +1,11 @@
 
 env:
     global:
-        - secure: "KebvYYPCLZYl62SdQ1EHSG1FCywWvFjtuzRWr+A0kWEpETRL1uAru1OXCbWeVw0wfqYlhaRoAdBp4ZSV9af9sG91cDMHSjbqdFv8izuTjK1IaLOhRp+t0O33t29WcsH1ovehbTLz82SwmHsxLMu/w65oh9g8k9hq7+MXzms4DqoYKTmKvi89SgsZpgWzYO+d0yOeqr5iBppePjuCU3mWdBtrxVFQbq/DV4UzOchpKk019zT6zBPtsrv0pAtJOVJ7TUucDZeHd7mU8kMxL4uwHucQo47McxKrI4vHHK8rg2QEqG+d5zTgjBi5pJs8mwArut8kIirYxLroyx6s6GNXw4Qc4w10mK+AA/sq8OCUQpL/of9N+1GYPaPwxq870MfX+fpeRbHpQqYKEeoWnOHBLearyVp44PQ4X2/K+ZkJWrS4IrmwDreiyjISSUKPcVGPzXpaNIfApfnIzIwTc2URnFWZMq2RolHVszTj38t4KFCntJz49fQgl2rYFXp1cfTyCj9/khTM/2/0UE6T+DO8HU3VEndoI8GkmdFAofdM4uDWfHGRUKB0o6HVn5tOUzgL3evfs+0mCCnRE+gabGq4vEkPSulTpN08y1hrBiQUZJCaex2U1KrHhqj3a0nDm8BcMcn74sYL5pbjjKIhgY8waZK9TJsEgvn/8hjbqoSyPxE="
+        - secure: "Hl3asFsAq68YmHwTR7E9bOHNZc/RRvh0DbXh/Ybi2JMktXh6lc0IjeloUOqcP9MsN5h/Ub8mp39EshrQxhk7pXJTbE04PV7BLyjViTHIQQjUvjSW6iIV9lDv01xi9IYEg4W1oa+2+7KyrD5i8+Dzpm+XLph2T+TzEYeC6mqjLJod/QAZsY1W6lw8pXzCv3eG4A/Pm4VrpBUCnFl/YiTDPBuDxYI/2YH13NsZOLQcL1K6tU36vzxBlW+oF2m8pLGywNdts7Vo/tZ9ov9/4XOEqnntIbyIqx59NAqL6R7uC92aXmp+oFLF2jFBnQIY5F5CpklgvD3hZm/QoQXX4819rgU9XlP8Js1t5hs46kg9GYvJ1QFr9QSX2S2A0Q+adalfQ38L2mHuUXiDOdXRU+EzRdMaDFFjQAassvLAj3Yx296PPLbsvIyrGqvLcMXj41YbBH3zp06Wq2BbsIgf9OnNWbmILzuQFuT2rqQlrQgpDJFb9+jChDiMKqIyumckCm6E+eZx2qrcrrPeGl7LtBOeHpqQ0mS39AJkHGH5ne4AKjm6ULWtcGeLaTHxQPU5/Ty+tHrUGKULTIDhBvKg6NMnNMm+PBqF7gMfi6oOR7Ad11Zq50P3fPLxYsq3zu30xpoaaWuBkOP7gTPmzvEYj2ONeRHASuDDr68pKfjZmmLISmY="
 
-        - secure: "rYieTm4O9u6ocUixfkfiiRyBER2ud7IIhVrEfosEBPy4aaIR0AgyymxHMqW5UMnXhHXWbJsR55S5MluOZHF6KUCciPAC2hBfG0k/HfEequL55kXgDYkItFXJCSJMTDpnFsv6FBNC1TZqI07PaKYarcCD1bRGbHdauoYzI47SivMOMuJIVVsi1+aZRaOiRUiiDOLp3E1MNSQfJ2Q2+qDxqyc0n+HfIC6iKr1/pjjY8UfsGV1zodUbP85P11mypKGxIFC6RBBIxDBXy70ha3JPB34zV6K+ElGA8Obuv3z4GPz6woAdyQaqyWEmBdBW8LB/L6EA+b4OBUBAZ7B5fof3OuKTV2TfSNNvS16oBLJGB6pXxxtPkVqJyXO9enz3b9Hsmi5OT6Pba1MpzbaAvxZG7jw+htvcZ2no0V+/cnPyqsU4ufbx7mL35ssIY39Br9pEVhLdCPes3czKXGczbvzCtJ58dgWXHXUu4rRpQE1uKaRB8oimhUrMXAd4sWTaLWrTpaGSvGJiW/n0bCkHfTmEMLoHpW115FtncLu7E9yefIjj5POsQTcMgJsj1imSiitLUBlvsz1GB1kyzeOfT5RPI2vvR4gs0+HA7izAVpv6hBnoEhoWnFaLRdoNbjiBPe7Z8cqj5d8HSzLR4S/2jIXLMLU9Hssk42f26+A7EIBb3xQ="
+        - secure: "ds57zkbScJysd/EJoCrYWWoCYDWnJ8LYBqaE7nPjHji/D+aSe8IBio8+mvvvUVtLUcsVqraVCcr2TW0IZb0jFFfOKxkVdo/sYviSzIsvrQqT/lT12fqZyBINuDNIVbH+kMdZfxYkYEuKZA0YQlnwSAgcx8MB6W/Ce5Igu8tA1gIQaZvcqWOMPAdWLT0RVXCLQePWdsL64t3LsImKhLO0lqOB/006OqLIm4zLXPhkSO0JGI8RagrBkdWf/u+SGBO/S0oSYSI1GhUMo5x8QGDXDlN2gR21BwA5gx8mwwfjloj4H/Bv6HeTC+2SHc7hfqATYoTAozkVocfXJgCeyrbx7s5V8YWLgRoW+s0T+Hnc30GlVn7ES5/OQhUpwYsV/X9DUW9dN48YcMIozJUoC1t2y4bqqcWJZf+xvmcz+Hlkilk2PR0DfzbSuZS2p/fRGrNecmdnehCSp2tC2fDXY5o8jZCs6fn7xbl3vEu5x4FRjXMrvpdZQ8SZlq/LhFVRSDUn5F9HUfrEslZ4cxxRPHN6bFJrRtO/3fkWnAbGBeT95YPiW5hedMc/XGLpmYkbvZeuNHxaxkYc+D+Lksiz8WXmRWE8fQwhNInLxXANkB//r41SsGvstrnZNkWmgM2IkpjisQ1FMhrh6oSGWNTaMPRedPlToDjZk84m3b+piMuvvxc="
 
-        - secure: "PvZ9CtEMNJvYwhU48RxzXlrzpHE1uIxmql5dnecRDjRxoaJQDolFcyKcNKw3giZ6IRngzLK2HVVLGm6TzsLMGKTOZRjar3GPcwm5w2aTrx+l2KML028w8U+5MaBj/IIDxxmPoCrWwOR6FDLiJT06rpmJVki/QAP3dcy0qaNLTWfNzMDBpNszrqxFa0ZoWIcGxUFiWlqHrQlVonlUrvR7WqtXy5iJzmtK56XNA/rzVcE758YCVeC6e9O/vaISINz4doJhY6JzpPCoF3oHhembsN0cV3d0ZGbP+L8aaDZPN7Hniorm7+ZUs2z8rgLQ38+wcdduC2NQUz4pWq6LhGCaSh1x4UgojzGrtwfX077+CiESi6kODjGR/hU6K/DsieEYLsIl0OtgtEIOuZphIQABP5kvMXC3MFymSL8sgpfSKyu0t+IO5AASELTJC6C0o92a9zXYMIwfcqNw646waoL6LVbH5db94gtYL+wWjFEmWvTSk/VLF0T6TqooQyIyIOapxmY6DjtAeXtC+MEO/g8w8rd5wWHXR33khpawoF35bu08Qpa+NzaTgOrtLbH4+3BDN6AElLEr19AsJuhabx3mFX1EGSTMfG4HOrZzaUOlY0G1CbktLPxS6Idm62o1NlEqdxrqsb87zXYClHXuYm5UgQx2lvldonP99jIK6+FUN1k="
+        - secure: "D5WyhJCVne9ypFd3u6yv/VWnQXTfgAtTxbdNvMvgk6Vg9mrVJTvp+H0fNWx3keJyaTFg+0nYn+dVyPtYgXXvdmCZv1AKX4COsE0fVuaPuj7pRZQoZ5GE7GIDo1pm55xs/VHwJRrXOEvkgU3eJHQAr+oLaimDdXwNdmNv0b2f1VtYrmNRzyAlHjX44bMuWRgDdggmCYDtJbQQAQ7KdjUDqmj1eQLCyJOongh8zglSVFVR66T984fAKYrhGAccHeeYYz/S8+EHRGMlu+DhvyVLlqUiqhalWv1uCYY4VSgOicP+trcIhpIRSg4OTqUAF3AhVrWTKwCRPyBmPnghR8tBj1+iN4kf5MmaUBxJWxnM8VwdS+gCm4iupjJ69vNWYtsaZ+PG6iiv9m34Gh/7x9qXKEJPjtf7t7pkEdYRFQGoWm6GFDmSsLo3XvmTeyUdUGtg0+pOZ2YsMJaAj2FsQgFdCS6oXNrpUIrugJF/Mz74Iam4RSXkFNcftOKXD0o9tpOsEn1eIJfwxVIVUmsmm32j3z11q6+SDr1cOuwc1oOpK8cgpTC2uonSSVnYrSLVpBVR5R9EzW/86RZ0bGAFf+UkQ+eaioTRBNJLz7ssHrGDBfSFxX1etb7ZPaj6gakYQjcmCYfPD7rn8lAyOFcdU9wT/yrd1VoQBAiVVVY7ESxEDEU="
 
 
 dist: trusty
@@ -30,14 +30,7 @@ python:
 before_install:
   - pip install pip -U
   - pip install -r requirements.txt
-  - docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v2
-
-install:
-  #
-before_install:
-  - pip install pip -U
-  - pip install -r requirements.txt
-  - docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v2
+  - docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v4
 
 install:
   - | 
@@ -84,9 +77,10 @@ after_success:
         gpg --export-ownertrust > dev/gpg_owner_trust
 
         # Encrypt gpg keys and trust with travis secret
-        TSP=$CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/travis_public_gpg_key.pgp > dev/travis_public_gpg_key.pgp.enc
-        TSP=$CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/travis_secret_gpg_key.pgp > dev/travis_secret_gpg_key.pgp.enc
-        TSP=$CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/gpg_owner_trust > dev/gpg_owner_trust.enc
+        TSP=$PYUTILS_CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/travis_public_gpg_key.pgp > dev/travis_public_gpg_key.pgp.enc
+        TSP=$PYUTILS_CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/travis_secret_gpg_key.pgp > dev/travis_secret_gpg_key.pgp.enc
+        TSP=$PYUTILS_CI_GITHUB_SECRET openssl enc -aes-256-cbc -md MD5 -pass env:TSP -e -a -in dev/gpg_owner_trust > dev/gpg_owner_trust.enc
+        echo $KEYID > dev/public_gpg_key
 
         source $(secret_unloader.sh)
 
@@ -95,6 +89,7 @@ after_success:
         rm dev/gpg_owner_trust dev/*.pgp
         git status
         git add dev/*.enc
+        git add dev/public_gpg_key
 
         '''  # <hack vim "regex" parser> '
     - |
@@ -184,20 +179,26 @@ after_success:
     # Package and publish to pypi (if on release)
     - |
         echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
+
+        KEYID=$(cat dev/public_gpg_key)
+        echo "KEYID = '$KEYID'"
         if [[ "$TRAVIS_BRANCH" == "release" ]]; then
             # use set +x to log all intermediate commands 
-            set +x
             export CURRENT_BRANCH=$TRAVIS_BRANCH
-            # TODO: reliable and secure gpg keys
-            # Relies on a specific environmenmt being available 
-            git config --global user.signingkey D297D757
-            git config --local user.signingkey D297D757
-            # git config --global gpg.program
-            MB_PYTHON_TAG=$MB_PYTHON_TAG GPG_KEYID=D297D757 CURRENT_BRANCH=$TRAVIS_BRANCH TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE USE_GPG=True DEPLOY_BRANCH=release TAG_AND_UPLOAD=yes ./publish.sh
-            set -x
+            TAG_AND_UPLOAD=yes
         else
-            MB_PYTHON_TAG=$MB_PYTHON_TAG GPG_KEYID=D297D757 CURRENT_BRANCH=$TRAVIS_BRANCH TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE USE_GPG=True DEPLOY_BRANCH=release TAG_AND_UPLOAD=no ./publish.sh
+            TAG_AND_UPLOAD=no
         fi
+        MB_PYTHON_TAG=$MB_PYTHON_TAG \
+            USE_GPG=True \
+            GPG_KEYID=$KEYID \
+            CURRENT_BRANCH=$TRAVIS_BRANCH \
+            TWINE_PASSWORD=$TWINE_PASSWORD \
+            TWINE_USERNAME=$TWINE_USERNAME \
+            GPG_EXECUTABLE=$GPG_EXECUTABLE \
+            DEPLOY_BRANCH=release \
+            TAG_AND_UPLOAD=$TAG_AND_UPLOAD \
+            ./publish.sh
 
 cache: 
     apt: true
