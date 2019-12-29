@@ -15,7 +15,9 @@ Requirements:
 
 Notes:
     # NEW API TO UPLOAD TO PYPI
+    # https://docs.travis-ci.com/user/deployment/pypi/
     # https://packaging.python.org/tutorials/distributing-packages/
+    # https://stackoverflow.com/questions/45188811/how-to-gpg-sign-a-file-that-is-built-by-travis-ci
 
 Usage:
     cd <YOUR REPO>
@@ -26,11 +28,15 @@ Usage:
 
     source $(secret_loader.sh)
 
-    # Interactive/Dry run
-    DEPLOY_BRANCH=master DEPLOY_REMOTE=Erotemic ./publish.sh 
+    MB_PYTHON_TAG=cp38-cp38m 
+    MB_PYTHON_TAG=cp37-cp37m 
+    MB_PYTHON_TAG=cp36-cp36m 
+    MB_PYTHON_TAG=cp35-cp35m 
+    MB_PYTHON_TAG=cp27-cp27mu
 
-    # Non-Interactive run
-    #./publish.sh yes
+    echo "MB_PYTHON_TAG = $MB_PYTHON_TAG"
+    MB_PYTHON_TAG=$MB_PYTHON_TAG ./run_multibuild.sh
+    DEPLOY_BRANCH=master DEPLOY_REMOTE=ibeis MB_PYTHON_TAG=$MB_PYTHON_TAG ./publish.sh yes
 '''
 
 check_variable(){
@@ -47,10 +53,9 @@ check_variable(){
 CURRENT_BRANCH=${CURRENT_BRANCH:=$(git branch | grep \* | cut -d ' ' -f2)}
 DEPLOY_BRANCH=${DEPLOY_BRANCH:=release}
 DEPLOY_REMOTE=${DEPLOY_REMOTE:=origin}
-VERSION=$(python -c "import setup; print(setup.VERSION)")
-#MB_PYTHON_TAG=${MB_PYTHON_TAG:=$(python -c "import setup; print(setup.MB_PYTHON_TAG)")}
-MB_PYTHON_TAG=${MB_PYTHON_TAG:=py2.py3-none-any}
 NAME=${NAME:=$(python -c "import setup; print(setup.NAME)")}
+VERSION=$(python -c "import setup; print(setup.VERSION)")
+MB_PYTHON_TAG=${MB_PYTHON_TAG:=$(python -c "import setup; print(setup.native_mb_python_tag())")}
 
 check_variable CURRENT_BRANCH
 check_variable DEPLOY_BRANCH
@@ -69,22 +74,6 @@ else
     GPG_EXECUTABLE=${GPG_EXECUTABLE:=gpg}
 fi
 
-#__note___='''
-#GPG_IDENTIFIER=Erotemic
-#KEYID=$(gpg --list-keys --keyid-format LONG "$GPG_IDENTIFIER" | head -n 2 | tail -n 1 | awk '{print $1}' | tail -c 9)
-#echo "KEYID = '$KEYID'"
-
-## https://help.github.com/en/articles/signing-commits
-#git config --local commit.gpgsign true
-## Note the GPG key needs to match the email
-#git config --local user.email $UserEmail
-## Tell git which key to sign
-#git config --local user.signingkey $KEYID
-#git config --local -l
-
-#GPG_KEYID=297D757
-#'''
-
 GPG_KEYID=${GPG_KEYID:=$(git config --local user.signingkey)}
 GPG_KEYID=${GPG_KEYID:=$(git config --global user.signingkey)}
 
@@ -97,28 +86,61 @@ VERSION='$VERSION'
 TWINE_USERNAME='$TWINE_USERNAME'
 GPG_KEYID = '$GPG_KEYID'
 MB_PYTHON_TAG = '$MB_PYTHON_TAG'
-NAME = '$NAME'
 "
 
 
 echo "
 === <BUILD WHEEL> ===
 "
+
+
+
 echo "LIVE BUILDING"
 # Build wheel and source distribution
-python setup.py bdist_wheel --universal
-python setup.py sdist 
 
-BDIST_WHEEL_PATH=$(ls dist/$NAME-$VERSION-$MB_PYTHON_TAG*.whl)
-SDIST_PATH=$(dir dist/$NAME-$VERSION*.tar.gz)
+MODE=${MODE:=all}
+
+if [[ "$MODE" == "all" ]]; then
+    # The default should change depending on the application
+    MODE_LIST=("sdist" "universal" "bdist")
+    #MODE_LIST=("sdist" "universal")
+    #MODE_LIST=("sdist" "bdist")
+else
+    MODE_LIST=("$MODE")
+fi
+
+MODE_LIST_STR=$(printf '"%s" ' "${MODE_LIST[@]}")
+
+WHEEL_PATHS=()
+for _MODE in "${MODE_LIST[@]}"
+do
+    echo "_MODE = $_MODE"
+    if [[ "$_MODE" == "sdist" ]]; then
+        python setup.py sdist 
+        WHEEL_PATH=$(ls dist/$NAME-$VERSION*.tar.gz)
+        WHEEL_PATHS+=($WHEEL_PATH)
+    elif [[ "$_MODE" == "universal" ]]; then
+        python setup.py bdist_wheel --universal
+        WHEEL_PATH=$(ls dist/$NAME-$VERSION-$MB_PYTHON_TAG*.whl)
+        WHEEL_PATHS+=($WHEEL_PATH)
+    elif [[ "$_MODE" == "bdist" ]]; then
+        echo "Assume wheel has already been built"
+        WHEEL_PATH=$(ls wheelhouse/$NAME-$VERSION-$MB_PYTHON_TAG*.whl)
+        WHEEL_PATHS+=($WHEEL_PATH)
+    else
+        echo "bad mode"
+        exit 1
+    fi
+    echo "WHEEL_PATH = $WHEEL_PATH"
+done
+
+WHEEL_PATHS_STR=$(printf '"%s" ' "${WHEEL_PATHS[@]}")
+
 echo "
-echo "VERSION='$VERSION'"
-BDIST_WHEEL_PATH='$BDIST_WHEEL_PATH'
-SDIST_PATH='$SDIST_PATH'
+MODE=$MODE
+VERSION='$VERSION'
+WHEEL_PATHS='$WHEEL_PATHS_STR'
 "
-
-check_variable BDIST_WHEEL_PATH
-check_variable SDIST_PATH 
 
 echo "
 === <END BUILD WHEEL> ===
@@ -127,39 +149,35 @@ echo "
 echo "
 === <GPG SIGN> ===
 "
-if [ "$USE_GPG" == "True" ]; then
-    # https://stackoverflow.com/questions/45188811/how-to-gpg-sign-a-file-that-is-built-by-travis-ci
-    # secure gpg --export-secret-keys > all.gpg
 
-    # REQUIRES GPG >= 2.2
-    check_variable GPG_EXECUTABLE
-    check_variable GPG_KEYID
 
-    #OLD_SIGS=$(ls dist/*.asc)
-    #if [[ "$OLD_SIGS" == "" ]]; then
-    #    echo "Removing old signatures"
-    #    rm $OLD_SIGS
-    #else
-    #    echo "dist dir is clearn"
-    #fi
+for WHEEL_PATH in "${WHEEL_PATHS[@]}"
+do
+    echo "WHEEL_PATH = $WHEEL_PATH"
+    check_variable WHEEL_PATH
+    if [ "$USE_GPG" == "True" ]; then
+        # https://stackoverflow.com/questions/45188811/how-to-gpg-sign-a-file-that-is-built-by-travis-ci
+        # secure gpg --export-secret-keys > all.gpg
 
-    echo "Signing wheels"
-    GPG_SIGN_CMD="$GPG_EXECUTABLE --batch --yes --detach-sign --armor --local-user $GPG_KEYID"
-    ls dist
-    echo "GPG_SIGN_CMD = $GPG_SIGN_CMD"
-    $GPG_SIGN_CMD --output $BDIST_WHEEL_PATH.asc $BDIST_WHEEL_PATH
-    $GPG_SIGN_CMD --output $SDIST_PATH.asc $SDIST_PATH
+        # REQUIRES GPG >= 2.2
+        check_variable GPG_EXECUTABLE
+        check_variable GPG_KEYID
 
-    echo "Checking wheels"
-    twine check $BDIST_WHEEL_PATH.asc $BDIST_WHEEL_PATH
-    twine check $SDIST_PATH.asc $SDIST_PATH
+        echo "Signing wheels"
+        GPG_SIGN_CMD="$GPG_EXECUTABLE --batch --yes --detach-sign --armor --local-user $GPG_KEYID"
+        ls wheelhouse
+        echo "GPG_SIGN_CMD = $GPG_SIGN_CMD"
+        $GPG_SIGN_CMD --output $WHEEL_PATH.asc $WHEEL_PATH
 
-    echo "Verifying wheels"
-    $GPG_EXECUTABLE --verify $BDIST_WHEEL_PATH.asc $BDIST_WHEEL_PATH 
-    $GPG_EXECUTABLE --verify $SDIST_PATH.asc $SDIST_PATH 
-else
-    echo "USE_GPG=False, Skipping GPG sign"
-fi
+        echo "Checking wheels"
+        twine check $WHEEL_PATH.asc $WHEEL_PATH
+
+        echo "Verifying wheels"
+        $GPG_EXECUTABLE --verify $WHEEL_PATH.asc $WHEEL_PATH 
+    else
+        echo "USE_GPG=False, Skipping GPG sign"
+    fi
+done
 echo "
 === <END GPG SIGN> ===
 "
@@ -188,21 +206,22 @@ if [[ "$TAG_AND_UPLOAD" == "yes" ]]; then
     check_variable TWINE_USERNAME
     check_variable TWINE_PASSWORD
 
-    git tag $VERSION -m "tarball tag $VERSION"
-    git push --tags $DEPLOY_REMOTE $DEPLOY_BRANCH
+    #git tag $VERSION -m "tarball tag $VERSION"
+    #git push --tags $DEPLOY_REMOTE $DEPLOY_BRANCH
 
-    if [ "$USE_GPG" == "True" ]; then
-        twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD --sign $BDIST_WHEEL_PATH.asc $BDIST_WHEEL_PATH
-        twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD --sign $SDIST_PATH.asc $SDIST_PATH
-    else
-        twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD $BDIST_WHEEL_PATH 
-        twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD $SDIST_PATH 
-    fi
+    for WHEEL_PATH in "${WHEEL_PATHS[@]}"
+    do
+        if [ "$USE_GPG" == "True" ]; then
+            twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD --sign $WHEEL_PATH.asc $WHEEL_PATH
+        else
+            twine upload --username $TWINE_USERNAME --password=$TWINE_PASSWORD $WHEEL_PATH 
+        fi
+    done
     echo """
         !!! FINISH: LIVE RUN !!!
     """
 else
-    ls dist
+    ls wheelhouse
     echo """
         DRY RUN ... Skiping tag and upload
 
@@ -211,6 +230,9 @@ else
         CURRENT_BRANCH = '$CURRENT_BRANCH'
         DEPLOY_BRANCH = '$DEPLOY_BRANCH'
         TAG_AND_UPLOAD = '$TAG_AND_UPLOAD'
+        WHEEL_PATH = '$WHEEL_PATH'
+        WHEEL_PATHS_STR = '$WHEEL_PATHS_STR'
+        MODE_LIST_STR = '$MODE_LIST_STR'
 
         To do live run set TAG_AND_UPLOAD=yes and ensure deploy and current branch are the same
 
