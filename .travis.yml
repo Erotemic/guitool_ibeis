@@ -8,7 +8,6 @@ env:
         - secure: "D5WyhJCVne9ypFd3u6yv/VWnQXTfgAtTxbdNvMvgk6Vg9mrVJTvp+H0fNWx3keJyaTFg+0nYn+dVyPtYgXXvdmCZv1AKX4COsE0fVuaPuj7pRZQoZ5GE7GIDo1pm55xs/VHwJRrXOEvkgU3eJHQAr+oLaimDdXwNdmNv0b2f1VtYrmNRzyAlHjX44bMuWRgDdggmCYDtJbQQAQ7KdjUDqmj1eQLCyJOongh8zglSVFVR66T984fAKYrhGAccHeeYYz/S8+EHRGMlu+DhvyVLlqUiqhalWv1uCYY4VSgOicP+trcIhpIRSg4OTqUAF3AhVrWTKwCRPyBmPnghR8tBj1+iN4kf5MmaUBxJWxnM8VwdS+gCm4iupjJ69vNWYtsaZ+PG6iiv9m34Gh/7x9qXKEJPjtf7t7pkEdYRFQGoWm6GFDmSsLo3XvmTeyUdUGtg0+pOZ2YsMJaAj2FsQgFdCS6oXNrpUIrugJF/Mz74Iam4RSXkFNcftOKXD0o9tpOsEn1eIJfwxVIVUmsmm32j3z11q6+SDr1cOuwc1oOpK8cgpTC2uonSSVnYrSLVpBVR5R9EzW/86RZ0bGAFf+UkQ+eaioTRBNJLz7ssHrGDBfSFxX1etb7ZPaj6gakYQjcmCYfPD7rn8lAyOFcdU9wT/yrd1VoQBAiVVVY7ESxEDEU="
 
 
-dist: trusty
 language: python
 sudo: false
 
@@ -17,7 +16,6 @@ sudo: false
 #      packages:
 #      # https://www.riverbankcomputing.com/pipermail/pyqt/2019-February/041363.html
 #      - libxkbcommon-x11-0
-
 services:
   - xvfb
 
@@ -39,15 +37,17 @@ python:
 before_install:
   - pip install pip -U
   - pip install -r requirements.txt
-  - docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v4
+  #- docker pull quay.io/erotemic/manylinux-for:x86_64-opencv4.1.0-v4
 
 install:
-  - | 
-      MB_PYTHON_TAG=$(python -c "import setup; print(setup.MB_PYTHON_TAG)") 
-      VERSION=$(python -c "import setup; print(setup.VERSION)") 
-      echo "VERSION = $VERSION"
-      echo "MB_PYTHON_TAG = $MB_PYTHON_TAG"
-  - MB_PYTHON_TAG=$MB_PYTHON_TAG ./run_manylinux_build.sh
+  #- | 
+  #    MB_PYTHON_TAG=$(python -c "import setup; print(setup.MB_PYTHON_TAG)") 
+  #    VERSION=$(python -c "import setup; print(setup.VERSION)") 
+  #    echo "VERSION = $VERSION"
+  #    echo "MB_PYTHON_TAG = $MB_PYTHON_TAG"
+  #- MB_PYTHON_TAG=$MB_PYTHON_TAG ./run_manylinux_build.sh
+  - MB_PYTHON_TAG="py2.py3-none-any"
+  - python setup.py bdist_wheel --universal
   - BDIST_WHEEL_PATH=$(ls dist/*-$VERSION-$MB_PYTHON_TAG*.whl)
   - echo "BDIST_WHEEL_PATH = $BDIST_WHEEL_PATH"
   - pip install $BDIST_WHEEL_PATH

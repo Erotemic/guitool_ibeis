@@ -69,8 +69,8 @@ VERSION=$(python -c "import setup; print(setup.VERSION)")
 MB_PYTHON_TAG=${MB_PYTHON_TAG:=$(python -c "import setup; print(setup.native_mb_python_tag())")}
 
 # The default should change depending on the application
-DEFAULT_MODE_LIST=("sdist" "universal" "bdist")
-#DEFAULT_MODE_LIST=("sdist" "universal")
+#DEFAULT_MODE_LIST=("sdist" "universal" "bdist")
+DEFAULT_MODE_LIST=("sdist" "universal")
 #DEFAULT_MODE_LIST=("sdist" "bdist")
 
 check_variable CURRENT_BRANCH
