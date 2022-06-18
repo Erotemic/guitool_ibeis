@@ -1505,13 +1505,13 @@ class ConfigConfirmWidget(GuitoolWidget):
         >>> # DISABLE_DOCTEST
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis
-        >>> import dtool
+        >>> import dtool_ibeis
         >>> guitool_ibeis.ensure_qapp()  # must be ensured before any embeding
         >>> tablename = None
         >>> dict_ = {'K': 1, 'Knorm': 5,
         >>>          'choice': ut.ParamInfo(varname='choice', default='one',
         >>>                                 valid_values=['one', 'two'])}
-        >>> config = dtool.Config.from_dict(dict_, tablename)
+        >>> config = dtool_ibeis.Config.from_dict(dict_, tablename)
         >>> dlg = guitool_ibeis.ConfigConfirmWidget.as_dialog(
         >>>     title='Confirm Merge Query',
         >>>     msg='Confirm',
@@ -1643,7 +1643,7 @@ class ConfigConfirmWidget(GuitoolWidget):
         print('*args = %r' % (args,))
         print('Update state')
         if self.param_info_dict is None:
-            print('Need dtool config')
+            print('Need dtool_ibeis config')
 
         for key, pi in self.param_info_dict.items():
             row = self.row_dict[key]
