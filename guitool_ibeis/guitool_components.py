@@ -2662,6 +2662,7 @@ class ComboRadioHybrid(GuitoolWidget):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qtapp()
