@@ -21,43 +21,41 @@ jobs:
       with:
         python-version: 3.8
     - name: Upgrade pip
-      run:
-      - python -m pip install --upgrade pip
-      - python -m pip install -r requirements/tests.txt
-      - python -m pip install -r requirements/runtime.txt
-      - python -m pip install -r requirements/headless.txt
+      run: |-
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements/tests.txt
+        python -m pip install -r requirements/runtime.txt
+        python -m pip install -r requirements/headless.txt
     - name: Build sdist
-      run: 'python setup.py sdist
-
-        '
+      run: |-
+        python setup.py sdist
     - name: Install sdist
-      run:
-      - ls -al ./dist
-      - pip install dist/guitool_ibeis*.tar.gz -v
+      run: |-
+        ls -al ./dist
+        pip install dist/guitool_ibeis*.tar.gz -v
     - name: Test minimal sdist
-      run:
-      - pwd
-      - ls -al
-      - MOD_DPATH=$(python -c "import guitool_ibeis, os; print(os.path.dirname(guitool_ibeis.__file__))")
-      - echo "MOD_DPATH = $MOD_DPATH"
-      - python -m pytest -p pytester -p no:doctest --xdoctest --cov={self.mod_name}
-        $MOD_DPATH ./tests
+      run: |-
+        pwd
+        ls -al
+        MOD_DPATH=$(python -c "import guitool_ibeis, os; print(os.path.dirname(guitool_ibeis.__file__))")
+        echo "MOD_DPATH = $MOD_DPATH"
+        python -m pytest -p pytester -p no:doctest --xdoctest --cov={self.mod_name} $MOD_DPATH ./tests
     - name: Test full sdist
-      run:
-      - pwd
-      - ls -al
-      - python -m pip install -r requirements/optional.txt
-      - python -m pip install -r requirements/headless.txt
-      - MOD_DPATH=$(python -c "import guitool_ibeis, os; print(os.path.dirname(guitool_ibeis.__file__))")
-      - echo "MOD_DPATH = $MOD_DPATH"
-      - WORKSPACE_DNAME="testsrcdir_${CI_PYTHON_VERSION}_${GITHUB_RUN_ID}_${RUNNER_OS}"
-      - mkdir -p $WORKSPACE_DNAME
-      - cd $WORKSPACE_DNAME
-      - MOD_DPATH=$(python -c "import {self.mod_name}, os; print(os.path.dirname({self.mod_name}.__file__))")
-      - echo "MOD_DPATH = $MOD_DPATH"
-      - python -m pytest -p pytester -p no:doctest --xdoctest $MOD_DPATH ../tests
-      - mv .coverage "../.coverage.$WORKSPACE_DNAME"
-      - cd ..
+      run: |-
+        pwd
+        ls -al
+        python -m pip install -r requirements/optional.txt
+        python -m pip install -r requirements/headless.txt
+        MOD_DPATH=$(python -c "import guitool_ibeis, os; print(os.path.dirname(guitool_ibeis.__file__))")
+        echo "MOD_DPATH = $MOD_DPATH"
+        WORKSPACE_DNAME="testsrcdir_${CI_PYTHON_VERSION}_${GITHUB_RUN_ID}_${RUNNER_OS}"
+        mkdir -p $WORKSPACE_DNAME
+        cd $WORKSPACE_DNAME
+        MOD_DPATH=$(python -c "import {self.mod_name}, os; print(os.path.dirname({self.mod_name}.__file__))")
+        echo "MOD_DPATH = $MOD_DPATH"
+        python -m pytest -p pytester -p no:doctest --xdoctest $MOD_DPATH ../tests
+        mv .coverage "../.coverage.$WORKSPACE_DNAME"
+        cd ..
     - name: Upload sdist artifact
       uses: actions/upload-artifact@v3
       with:
@@ -85,26 +83,25 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Build pure wheel
-      run:
-      - python -m pip install setuptools>=0.8 wheel
-      - python -m pip wheel --wheel-dir wheelhouse .
+      run: |-
+        python -m pip install setuptools>=0.8 wheel
+        python -m pip wheel --wheel-dir wheelhouse .
       shell: bash
     - env:
         CI_PYTHON_VERSION: py${{ matrix.python-version }}
       name: Test pure wheel
-      run:
-      - python -m pip install wheelhouse/{self.mod_name}*.whl
-      - python -m pip install -r requirements/tests.txt
-      - python -m pip install -r requirements/headless.txt
-      - WORKSPACE_DNAME="testdir_${CI_PYTHON_VERSION}_${GITHUB_RUN_ID}_${RUNNER_OS}"
-      - mkdir -p $WORKSPACE_DNAME
-      - cd $WORKSPACE_DNAME
-      - MOD_DPATH=$(python -c "import {self.mod_name}, os; print(os.path.dirname({self.mod_name}.__file__))")
-      - echo "MOD_DPATH = $MOD_DPATH"
-      - python -m pytest -p pytester -p no:doctest --xdoctest --cov-config ../pyproject.toml
-        --cov-report term --cov={self.mod_name} $MOD_DPATH ../tests
-      - mv .coverage "../.coverage.$WORKSPACE_DNAME"
-      - cd ..
+      run: |-
+        python -m pip install wheelhouse/{self.mod_name}*.whl
+        python -m pip install -r requirements/tests.txt
+        python -m pip install -r requirements/headless.txt
+        WORKSPACE_DNAME="testdir_${CI_PYTHON_VERSION}_${GITHUB_RUN_ID}_${RUNNER_OS}"
+        mkdir -p $WORKSPACE_DNAME
+        cd $WORKSPACE_DNAME
+        MOD_DPATH=$(python -c "import {self.mod_name}, os; print(os.path.dirname({self.mod_name}.__file__))")
+        echo "MOD_DPATH = $MOD_DPATH"
+        python -m pytest -p pytester -p no:doctest --xdoctest --cov-config ../pyproject.toml --cov-report term --cov={self.mod_name} $MOD_DPATH ../tests
+        mv .coverage "../.coverage.$WORKSPACE_DNAME"
+        cd ..
       shell: bash
     - name: Show built files
       run: ls -la wheelhouse
@@ -116,29 +113,18 @@ jobs:
         python-version: 3.8
     - if: runner.os == 'Linux'
       name: Combine coverage Linux
-      run: 'echo ''############ PWD''
-
+      run: |-
+        echo '############ PWD'
         pwd
-
         ls -al
-
         python -m pip install coverage[toml]
-
-        echo ''############ combine''
-
+        echo '############ combine'
         coverage combine .
-
-        echo ''############ XML''
-
+        echo '############ XML'
         coverage xml -o ./tests/coverage.xml
-
-        echo ''############ FIND''
-
+        echo '############ FIND'
         find . -name .coverage.*
-
         find . -name coverage.xml
-
-        '
     - name: Codecov Upload
       uses: actions/codecov-action@v4
       with:
@@ -168,14 +154,13 @@ jobs:
       with:
         python-version: 3.8
     - name: Install dependencies
-      run: 'python -m pip install --upgrade pip
-
-        python -m pip install flake8'
+      run: |-
+        python -m pip install --upgrade pip
+        python -m pip install flake8
     - name: Lint with flake8
-      run: '# stop the build if there are Python syntax errors or undefined names
-
-        flake8 /home/joncrall/code/guitool_ibeis/guitool_ibeis --count --select=E9,F63,F7,F82
-        --show-source --statistics'
+      run: |-
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 /home/joncrall/code/guitool_ibeis/guitool_ibeis --count --select=E9,F63,F7,F82 --show-source --statistics
   live_deploy:
     if: github.event_name == 'push' && (startsWith(github.event.ref, 'refs/heads/main'))
     name: Uploading {mode.capitalize()} to PyPi
@@ -200,33 +185,27 @@ jobs:
         TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
         TWINE_USERNAME: ${{ secrets.TEST_TWINE_USERNAME }}
       name: Sign and Publish
-      run:
-      - ls -al
-      - GPG_EXECUTABLE=gpg
-      - $GPG_EXECUTABLE --version
-      - openssl version
-      - $GPG_EXECUTABLE --list-keys
-      - echo "Decrypting Keys"
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/ci_public_gpg_key.pgp.enc | $GPG_EXECUTABLE --import
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/gpg_owner_trust.enc | $GPG_EXECUTABLE --import-ownertrust
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/ci_secret_gpg_subkeys.pgp.enc | $GPG_EXECUTABLE --import
-      - echo "Finish Decrypt Keys"
-      - $GPG_EXECUTABLE --list-keys || true
-      - $GPG_EXECUTABLE --list-keys  || echo "first invocation of gpg creates directories
-        and returns 1"
-      - $GPG_EXECUTABLE --list-keys
-      - VERSION=$(python -c "import setup; print(setup.VERSION)")
-      - pip install twine
-      - pip install six pyopenssl ndg-httpsclient pyasn1 -U --user
-      - pip install requests[security] twine --user
-      - GPG_KEYID=$(cat dev/public_gpg_key)
-      - echo "GPG_KEYID = '$GPG_KEYID'"
-      - DO_GPG=True GPG_KEYID=$GPG_KEYID TWINE_REPOSITORY_URL=${TWINE_REPOSITORY_URL}
-        TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE
-        DO_UPLOAD=True DO_TAG=False ./publish.sh
+      run: |-
+        ls -al
+        GPG_EXECUTABLE=gpg
+        $GPG_EXECUTABLE --version
+        openssl version
+        $GPG_EXECUTABLE --list-keys
+        echo "Decrypting Keys"
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/ci_public_gpg_key.pgp.enc | $GPG_EXECUTABLE --import
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/gpg_owner_trust.enc | $GPG_EXECUTABLE --import-ownertrust
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/ci_secret_gpg_subkeys.pgp.enc | $GPG_EXECUTABLE --import
+        echo "Finish Decrypt Keys"
+        $GPG_EXECUTABLE --list-keys || true
+        $GPG_EXECUTABLE --list-keys  || echo "first invocation of gpg creates directories and returns 1"
+        $GPG_EXECUTABLE --list-keys
+        VERSION=$(python -c "import setup; print(setup.VERSION)")
+        pip install twine
+        pip install six pyopenssl ndg-httpsclient pyasn1 -U --user
+        pip install requests[security] twine --user
+        GPG_KEYID=$(cat dev/public_gpg_key)
+        echo "GPG_KEYID = '$GPG_KEYID'"
+        DO_GPG=True GPG_KEYID=$GPG_KEYID TWINE_REPOSITORY_URL=${TWINE_REPOSITORY_URL} TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE DO_UPLOAD=True DO_TAG=False ./publish.sh
   test_deploy:
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     name: Uploading {mode.capitalize()} to PyPi
@@ -251,30 +230,24 @@ jobs:
         TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
         TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
       name: Sign and Publish
-      run:
-      - ls -al
-      - GPG_EXECUTABLE=gpg
-      - $GPG_EXECUTABLE --version
-      - openssl version
-      - $GPG_EXECUTABLE --list-keys
-      - echo "Decrypting Keys"
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/ci_public_gpg_key.pgp.enc | $GPG_EXECUTABLE --import
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/gpg_owner_trust.enc | $GPG_EXECUTABLE --import-ownertrust
-      - GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass
-        env:GLKWS -d -a -in dev/ci_secret_gpg_subkeys.pgp.enc | $GPG_EXECUTABLE --import
-      - echo "Finish Decrypt Keys"
-      - $GPG_EXECUTABLE --list-keys || true
-      - $GPG_EXECUTABLE --list-keys  || echo "first invocation of gpg creates directories
-        and returns 1"
-      - $GPG_EXECUTABLE --list-keys
-      - VERSION=$(python -c "import setup; print(setup.VERSION)")
-      - pip install twine
-      - pip install six pyopenssl ndg-httpsclient pyasn1 -U --user
-      - pip install requests[security] twine --user
-      - GPG_KEYID=$(cat dev/public_gpg_key)
-      - echo "GPG_KEYID = '$GPG_KEYID'"
-      - DO_GPG=True GPG_KEYID=$GPG_KEYID TWINE_REPOSITORY_URL=${TWINE_REPOSITORY_URL}
-        TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE
-        DO_UPLOAD=True DO_TAG=False ./publish.sh
+      run: |-
+        ls -al
+        GPG_EXECUTABLE=gpg
+        $GPG_EXECUTABLE --version
+        openssl version
+        $GPG_EXECUTABLE --list-keys
+        echo "Decrypting Keys"
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/ci_public_gpg_key.pgp.enc | $GPG_EXECUTABLE --import
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/gpg_owner_trust.enc | $GPG_EXECUTABLE --import-ownertrust
+        GLKWS=$EROTEMIC_CI_SECRET openssl enc -aes-256-cbc -pbkdf2 -md SHA512 -pass env:GLKWS -d -a -in dev/ci_secret_gpg_subkeys.pgp.enc | $GPG_EXECUTABLE --import
+        echo "Finish Decrypt Keys"
+        $GPG_EXECUTABLE --list-keys || true
+        $GPG_EXECUTABLE --list-keys  || echo "first invocation of gpg creates directories and returns 1"
+        $GPG_EXECUTABLE --list-keys
+        VERSION=$(python -c "import setup; print(setup.VERSION)")
+        pip install twine
+        pip install six pyopenssl ndg-httpsclient pyasn1 -U --user
+        pip install requests[security] twine --user
+        GPG_KEYID=$(cat dev/public_gpg_key)
+        echo "GPG_KEYID = '$GPG_KEYID'"
+        DO_GPG=True GPG_KEYID=$GPG_KEYID TWINE_REPOSITORY_URL=${TWINE_REPOSITORY_URL} TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE DO_UPLOAD=True DO_TAG=False ./publish.sh
