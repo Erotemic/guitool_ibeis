@@ -1,6 +1,6 @@
 import sys
 from os.path import exists
-# from setuptools import find_packages
+from setuptools import find_packages
 from setuptools import setup
 
 
@@ -238,17 +238,17 @@ if __name__ == "__main__":
     setup(
         name=NAME,
         version=VERSION,
-        author='Jon Crall',
-        author_email='erotemic@gmail.com',
-        url='https://github.com/Erotemic/guitool',
-        description=('Guitool - tools pyqt4 guis'),
+        author="Jon Crall",
+        author_email="erotemic@gmail.com",
+        url="https://github.com/Erotemic/guitool_ibeis",
+        description="Guitool - tools pyqt4 guis",
         long_description=parse_description(),
         long_description_content_type="text/x-rst",
         license="Apache 2",
-        packages=['guitool_ibeis', 'guitool_ibeis.__PYQT__'],
+        packages=find_packages("."),
         python_requires=">=3.7",
         classifiers=[
-            ("Development Status :: 3 - Alpha",),
+            "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
             "Topic :: Software Development :: Libraries :: Python Modules",
             "Topic :: Utilities",
