@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 #from guitool_ibeis.__PYQT__.QtCore import Qt
-import six
+# import six
 from guitool_ibeis.__PYQT__.QtCore import QLocale
 import utool as ut
 import uuid
@@ -13,7 +13,7 @@ from guitool_ibeis.guitool_decorators import checks_qt_error
 #elif six.PY3:
 QVariant = None
 
-__STR__ = unicode if six.PY2 else str
+__STR__ = str
 
 QString = __STR__
 
@@ -40,8 +40,8 @@ ItemDataRoles = {
     11 : 'AccessibleTextRole',    # text used by accessibility extensions and plugins (QString)
     12 : 'AccessibleDescriptionRole',  # accessibe description of the item for (QString)
     32 : 'UserRole',             # first role that can be used for application-specific purposes.
-    8  : 'BackgroundColorRole',  # Obsolete. Use BackgroundRole instead.
-    9  : 'TextColorRole',        # Obsolete. Use ForegroundRole instead.
+    # 8  : 'BackgroundColorRole',  # Obsolete. Use BackgroundRole instead.
+    # 9  : 'TextColorRole',        # Obsolete. Use ForegroundRole instead.
 }
 
 LOCALE = QLocale()
