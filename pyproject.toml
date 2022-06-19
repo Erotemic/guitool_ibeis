@@ -15,6 +15,7 @@ author="Jon Crall"
 author_email="erotemic@gmail.com"
 dev_status = "beta"
 autostage = true
+os = [ "linux" ]
 
 [tool.pytest.ini_options]
 addopts = "-p no:doctest --xdoctest --xdoctest-style=google --ignore-glob=setup.py"

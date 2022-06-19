@@ -155,9 +155,7 @@ jobs:
       arch:
       - auto
       os:
-      - windows-latest
       - ubuntu-latest
-      - macOS-latest
       python-version:
       - '3.7'
       - '3.8'
@@ -252,9 +250,7 @@ jobs:
       arch:
       - auto
       os:
-      - windows-latest
       - ubuntu-latest
-      - macOS-latest
       python-version:
       - '3.7'
       - '3.8'
