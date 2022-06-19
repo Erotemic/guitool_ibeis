@@ -1,3 +1,15 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# Based on ~/code/xcookie/xcookie/rc/tests.yml.in
+# Now based on ~/code/xcookie/xcookie/builders/github_actions.py
+
+name: Tests
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+
 jobs:
 - runs-on: ubuntu-latest
   steps:
@@ -356,9 +368,3 @@ jobs:
     - DO_GPG=True GPG_KEYID=$GPG_KEYID TWINE_REPOSITORY_URL=${TWINE_REPOSITORY_URL}
       TWINE_PASSWORD=$TWINE_PASSWORD TWINE_USERNAME=$TWINE_USERNAME GPG_EXECUTABLE=$GPG_EXECUTABLE
       DO_UPLOAD=True DO_TAG=False ./publish.sh
-name: Tests
-'on':
-  pull_request:
-    branches:
-    - main
-  push: null
