@@ -208,6 +208,7 @@ def _populate_tree_iterative(root_node, num_levels, ider_list):
         python -m guitool_ibeis.api_tree_node --test-_populate_tree_iterative
 
     Example:
+        >>> # xdoctest: +SKIP
         >>> # xdoctest: +REQUIRES(module:ibeis)
         >>> from guitool_ibeis.api_tree_node import *  # NOQA
         >>> import utool as ut
@@ -271,6 +272,7 @@ def _populate_tree_recursive(parent_node, child_ids, num_levels, ider_list, leve
             list next_ids
 
     Example:
+        >>> # xdoctest: +SKIP
         >>> # xdoctest: +REQUIRES(module:ibeis)
         >>> from guitool_ibeis.api_tree_node import *  # NOQA
         >>> from guitool_ibeis.api_tree_node import *  # NOQA
@@ -326,6 +328,7 @@ def _populate_tree_recursive_lazy(parent_node, child_ids, num_levels, ider_list,
             list next_ids
 
     Example:
+        >>> # xdoctest: +SKIP
         >>> # xdoctest: +REQUIRES(module:ibeis)
         >>> from guitool_ibeis.api_tree_node import *  # NOQA
         >>> import utool as ut

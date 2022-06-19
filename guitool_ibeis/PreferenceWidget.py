@@ -33,16 +33,21 @@ def report_thread_error(fn):
 
 
 def _qt_set_leaf_data(self, qvar):
-    """ Sets backend data using QVariants """
+    """
+    Sets backend data using QVariants
+
+    This code is duplicated in utool.Preferences.
+    Not sure where it is supposed to live
+    """
     if VERBOSE_PREF:
         print('')
-        print('+--- [pref.qt_set_leaf_data]')
-        print('[pref.qt_set_leaf_data] qvar = %r' % qvar)
-        print('[pref.qt_set_leaf_data] _intern.name=%r' % self._intern.name)
-        print('[pref.qt_set_leaf_data] _intern.type_=%r' % self._intern.get_type())
-        print('[pref.qt_set_leaf_data] type(_intern.value)=%r' % type(self._intern.value))
-        print('[pref.qt_set_leaf_data] _intern.value=%r' % self._intern.value)
-        #print('[pref.qt_set_leaf_data] qvar.toString()=%s' % str(qvar.toString()))
+        print('+--- [gt.pref.qt_set_leaf_data]')
+        print('[gt.pref.qt_set_leaf_data] qvar = %r' % qvar)
+        print('[gt.pref.qt_set_leaf_data] _intern.name=%r' % self._intern.name)
+        print('[gt.pref.qt_set_leaf_data] _intern.type_=%r' % self._intern.get_type())
+        print('[gt.pref.qt_set_leaf_data] type(_intern.value)=%r' % type(self._intern.value))
+        print('[gt.pref.qt_set_leaf_data] _intern.value=%r' % self._intern.value)
+        #print('[gt.pref.qt_set_leaf_data] qvar.toString()=%s' % str(qvar.toString()))
     if self._tree.parent is None:
         raise Exception('[Pref.qtleaf] Cannot set root preference')
     if self.qt_is_editable():
@@ -86,7 +91,11 @@ def _qt_set_leaf_data(self, qvar):
                 #new_val = str(qvar.toString())
                 type_ = self._intern.get_type()
                 if type_ is not None:
-                    new_val = type_(str(qvar))
+                    if issubclass(type_, list) and isinstance(qvar, str):
+                        # We probably want to parse the string into a list
+                        new_val = restricted_eval(qvar, max_chars=2048)
+                    else:
+                        new_val = type_(str(qvar))
                 else:
                     new_val = str(qvar)
             except Exception:
@@ -106,9 +115,9 @@ def _qt_set_leaf_data(self, qvar):
         # save to disk after modifying data
         if VERBOSE_PREF:
             print('---')
-            print('[pref.qt_set_leaf_data] new_val=%r' % new_val)
-            print('[pref.qt_set_leaf_data] type(new_val)=%r' % type(new_val))
-            print('L____ [pref.qt_set_leaf_data]')
+            print('[gt.pref.qt_set_leaf_data] new_val=%r' % new_val)
+            print('[gt.pref.qt_set_leaf_data] type(new_val)=%r' % type(new_val))
+            print('L____ [gt.pref.qt_set_leaf_data]')
         # TODO Add ability to set a callback function when certain
         # preferences are changed.
         return self._tree.parent.pref_update(self._intern.name, new_val)
@@ -345,10 +354,11 @@ class EditPrefWidget(QtWidgets.QWidget):
 def test_preference_gui():
     r"""
     CommandLine:
-        python -m guitool_ibeis.PreferenceWidget --exec-test_preference_gui --show
+        python -m guitool_ibeis.PreferenceWidget test_preference_gui --show
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(--show)
         >>> from guitool_ibeis.PreferenceWidget import *  # NOQA
         >>> import guitool_ibeis
         >>> guitool_ibeis.ensure_qtapp()
@@ -356,8 +366,8 @@ def test_preference_gui():
         >>> ut.quit_if_noshow()
         >>> guitool_ibeis.qtapp_loop(freq=10)
     """
-    import dtool
-    class DtoolConfig(dtool.Config):
+    import dtool_ibeis
+    class DtoolConfig(dtool_ibeis.Config):
         _param_info_list = [
             ut.ParamInfo('str_option2', 'hello'),
             ut.ParamInfo('int_option2', 456),
@@ -387,13 +397,79 @@ def test_preference_gui():
     return old, epw
 
 
-if __name__ == '__main__':
-    r"""
-    CommandLine:
-        python -m guitool_ibeis.PreferenceWidget
-        python -m guitool_ibeis.PreferenceWidget --allexamples
+class RestrictedSyntaxError(Exception):
     """
-    import multiprocessing
-    multiprocessing.freeze_support()  # for win32
-    import utool as ut  # NOQA
-    ut.doctest_funcs()
+    An exception raised by restricted_eval if a disallowed expression is given
+    """
+    pass
+
+
+def restricted_eval(expr, max_chars=32, local_dict=None, builtins_passlist=None):
+    """
+    A restricted form of Python's eval that is meant to be slightly safer
+
+    Args:
+        expr (str): the expression to evaluate
+        max_char (int): expression cannot be more than this many characters
+        local_dict (Dict[str, Any]): a list of variables allowed to be used
+        builtins_passlist : if specified, only allow use of certain builtins
+
+    References:
+        https://realpython.com/python-eval-function/#minimizing-the-security-issues-of-eval
+
+    Notes:
+        This function may not be safe, but it has as many mitigation measures
+        that I know about. This function should be audited and possibly made
+        even more restricted. The idea is that this should just be used to
+        evaluate numeric expressions.
+
+    Example:
+        >>> builtins_passlist = ['min', 'max', 'round', 'sum']
+        >>> local_dict = {}
+        >>> max_chars = 32
+        >>> expr = 'max(3 + 2, 9)'
+        >>> result = restricted_eval(expr, max_chars, local_dict, builtins_passlist)
+        >>> expr = '3 + 2'
+        >>> result = restricted_eval(expr, max_chars, local_dict, builtins_passlist)
+        >>> expr = '3 + 2'
+        >>> result = restricted_eval(expr, max_chars)
+        >>> import pytest
+        >>> with pytest.raises(RestrictedSyntaxError):
+        >>>     expr = 'max(a + 2, 3)'
+        >>>     result = restricted_eval(expr, max_chars, dict(a=3))
+    """
+    import builtins
+    import ubelt as ub
+    if len(expr) > max_chars:
+        raise RestrictedSyntaxError(
+            'num-workers-hueristic should be small text. '
+            'We want to disallow attempts at crashing python '
+            'by feeding nasty input into eval. But this may still '
+            'be dangerous.'
+        )
+    if local_dict is None:
+        local_dict = {}
+
+    if builtins_passlist is None:
+        builtins_passlist = []
+
+    allowed_builtins = ub.dict_isect(builtins.__dict__, builtins_passlist)
+
+    local_dict['__builtins__'] = allowed_builtins
+    allowed_names = list(allowed_builtins.keys()) + list(local_dict.keys())
+    code = compile(expr, "<string>", "eval")
+    # Step 3
+    for name in code.co_names:
+        if name not in allowed_names:
+            raise RestrictedSyntaxError(f"Use of {name} not allowed")
+    result = eval(code, local_dict, local_dict)
+    return result
+
+
+if __name__ == '__main__':
+    """
+    CommandLine:
+        python ~/code/guitool_ibeis/guitool_ibeis/PreferenceWidget.py
+    """
+    import xdoctest
+    xdoctest.doctest_module(__file__)

@@ -15,26 +15,28 @@ Ignore:
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 import utool as ut
+import six
 ut.noinject(__name__, '[__PYQT__._internal]')
 
 
 # SIP must be imported before any PyQt
-try:
-    import sip
-    # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
-    sip.setapi('QVariant', 2)
-    sip.setapi('QString', 2)
-    sip.setapi('QTextStream', 2)
-    sip.setapi('QTime', 2)
-    sip.setapi('QUrl', 2)
-    sip.setapi('QDate', 2)
-    sip.setapi('QDateTime', 2)
-    if hasattr(sip, 'setdestroyonexit'):
-        sip.setdestroyonexit(False)  # This prevents a crash on windows
-except ImportError as ex:
-    print('Warning: Import Error: %s' % str(ex))
-except ValueError as ex:
-    print('Warning: Value Error: %s' % str(ex))
+if six.PY2:
+    try:
+        import sip
+        # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
+        sip.setapi('QVariant', 2)
+        sip.setapi('QString', 2)
+        sip.setapi('QTextStream', 2)
+        sip.setapi('QTime', 2)
+        sip.setapi('QUrl', 2)
+        sip.setapi('QDate', 2)
+        sip.setapi('QDateTime', 2)
+        if hasattr(sip, 'setdestroyonexit'):
+            sip.setdestroyonexit(False)  # This prevents a crash on windows
+    except ImportError as ex:
+        print('Warning: Import Error: %s' % str(ex))
+    except ValueError as ex:
+        print('Warning: Value Error: %s' % str(ex))
 
 try:
     import PyQt5

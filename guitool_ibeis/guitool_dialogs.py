@@ -61,6 +61,7 @@ def user_option(parent=None, msg='msg', title='user_option',
     Example:
         >>> # GUI_DOCTEST
         >>> # xdoctest: +REQUIRES(--gui)
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_dialogs import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qtapp()
@@ -520,6 +521,7 @@ def msgbox(msg='', title='msgbox', detailed_msg=None):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> import guitool_ibeis
         >>> guitool_ibeis.ensure_qtapp()
         >>> from guitool_ibeis.guitool_dialogs import *  # NOQA

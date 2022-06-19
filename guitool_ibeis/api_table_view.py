@@ -65,6 +65,7 @@ class APITableView(API_VIEW_BASE):
 
         Example:
             >>> # ENABLE_DOCTEST
+            >>> # xdoctest: +REQUIRES(env:DISPLAY)
             >>> from guitool_ibeis.api_table_view import *  # NOQA
             >>> import guitool_ibeis
             >>> guitool_ibeis.ensure_qapp()
@@ -120,6 +121,7 @@ class APITableView(API_VIEW_BASE):
 
         Example:
             >>> # ENABLE_DOCTEST
+            >>> # xdoctest: +REQUIRES(env:DISPLAY)
             >>> from guitool_ibeis.api_table_view import *  # NOQA
             >>> import guitool_ibeis
             >>> guitool_ibeis.ensure_qapp()

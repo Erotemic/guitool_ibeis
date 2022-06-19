@@ -3,14 +3,15 @@
 http://matplotlib.org/examples/user_interfaces/embedding_in_qt4.html
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
-#import utool as ut
-#import sys
-#import os
-#import random
 import time
-import utool as ut
-from guitool_ibeis.__PYQT__ import QtCore
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from guitool_ibeis.__PYQT__ import QtCore, QtWidgets
+from guitool_ibeis import __PYQT__
+if __PYQT__.GUITOOL_PYQT_VERSION == 5:
+    from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+elif __PYQT__.GUITOOL_PYQT_VERSION == 4:
+    from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+else:
+    raise NotImplementedError
 from matplotlib.figure import Figure
 #from matplotlib.backends import qt_compat
 
@@ -30,10 +31,11 @@ class QtAbstractMplInteraction(BASE):
         dpi (int): (default = 100)
 
     CommandLine:
-        python -m guitool_ibeis.mpl_embed --exec-QtAbstractMplInteraction --show
+        python -m guitool_ibeis.mpl_embed QtAbstractMplInteraction --show
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.mpl_embed import *  # NOQA
         >>> import plottool_ibeis as pt
         >>> import guitool_ibeis
@@ -49,9 +51,10 @@ class QtAbstractMplInteraction(BASE):
         >>> self.start_blocking()
         >>> print('Done')
         >>> # xdoctest: +REQUIRES(--show)
-        >>> ut.quit_if_noshow()
-        >>> import plottool_ibeis as pt
-        >>> ut.show_if_requested()
+        >>> #import utool as ut
+        >>> #ut.quit_if_noshow()
+        >>> #import plottool_ibeis as pt
+        >>> #ut.show_if_requested()
         >>> guitool_ibeis.qtapp_loop(self, frequency=100, init_signals=True)
 
     """
@@ -61,7 +64,17 @@ class QtAbstractMplInteraction(BASE):
         self._running = None
         self.axes = fig.add_subplot(111)
         # We want the axes cleared every time plot() is called
-        self.axes.hold(False)
+        has_hold = False
+        try:
+            import matplotlib as mpl
+            from distutils.version import LooseVersion
+            has_hold = LooseVersion(mpl.__version__) < '3.0.0'
+        except Exception:
+            pass
+
+        if has_hold:
+            self.axes.hold(False)
+
         self.compute_initial_figure()
         #
         BASE.__init__(self, fig)
@@ -100,7 +113,5 @@ if __name__ == '__main__':
         python -m guitool_ibeis.mpl_embed
         python -m guitool_ibeis.mpl_embed --allexamples
     """
-    import multiprocessing
-    multiprocessing.freeze_support()  # for win32
-    import utool as ut  # NOQA
-    ut.doctest_funcs()
+    import xdoctest
+    xdoctest.doctest_module(__file__)

@@ -1,11 +1,10 @@
 # flake8: noqa
 from __future__ import absolute_import, division, print_function
 
-__version__ = '2.0.1'
+__version__ = '2.1.0'
 
 import utool as ut
 ut.noinject(__name__, '[guitool_ibeis.__init__]')
-
 
 #try:
 #    # try seeing if importing plottool_ibeis before any guitool_ibeis things helps

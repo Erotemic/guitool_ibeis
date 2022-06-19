@@ -651,7 +651,7 @@ BOOL_AS_COMBO = False
 
 class ConfigNodeWrapper(ut.NiceRepr):
     """
-    Wraps a dtool.Config object for internal qt use
+    Wraps a dtool_ibeis.Config object for internal qt use
     """
     def __init__(self, name=None, config=None, parent=None, param_info=None):
         self.name = name
@@ -887,10 +887,10 @@ class ConfigNodeWrapper(ut.NiceRepr):
 
 class EditConfigWidget(QtWidgets.QWidget):
     """
-    Widget to edit a dtool.Config object
+    Widget to edit a dtool_ibeis.Config object
 
     Args:
-        config (dtool.Config):
+        config (dtool_ibeis.Config):
 
     CommandLine:
         python -m guitool_ibeis.PrefWidget2 EditConfigWidget --show
@@ -901,10 +901,10 @@ class EditConfigWidget(QtWidgets.QWidget):
         >>> from guitool_ibeis.PrefWidget2 import *  # NOQA
         >>> import guitool_ibeis
         >>> guitool_ibeis.ensure_qtapp()
-        >>> import dtool
+        >>> import dtool_ibeis
         >>> def changed(key=None):
         >>>     print('config[key] = %r has changed' % (key,))
-        >>> class ExampleConfig(dtool.Config):
+        >>> class ExampleConfig(dtool_ibeis.Config):
         >>>     _param_info_list = [
         >>>         ut.ParamInfo('str_option', 'hello'),
         >>>         ut.ParamInfo('int_option', 42, none_ok=False),
@@ -1075,7 +1075,5 @@ if __name__ == '__main__':
         python -m guitool_ibeis.PrefWidget2
         python -m guitool_ibeis.PrefWidget2 --allexamples
     """
-    import multiprocessing
-    multiprocessing.freeze_support()  # for win32
-    import utool as ut  # NOQA
-    ut.doctest_funcs()
+    import xdoctest
+    xdoctest.doctest_module(__file__)

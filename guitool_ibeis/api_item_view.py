@@ -70,9 +70,12 @@ def _init_itemview_behavior(view):
     Example:
         >>> # ENABLE_DOCTEST
         >>> # TODO figure out how to test these
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.api_item_view import *  # NOQA
         >>> from guitool_ibeis import api_table_view
         >>> from guitool_ibeis import api_tree_view
+        >>> import guitool_ibeis as gt
+        >>> app = gt.ensure_qapp()[0]
         >>> view = api_table_view.APITableView()
         >>> view = api_tree_view.APITreeView()
 
@@ -318,6 +321,7 @@ def keyPressEvent(view, event):
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.api_item_view import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> app = gt.ensure_qapp()[0]

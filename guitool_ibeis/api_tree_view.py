@@ -67,6 +67,7 @@ class APITreeView(API_VIEW_BASE):
         Example:
             >>> # ENABLE_DOCTEST
             >>> # TODO figure out how to test these
+            >>> # xdoctest: +REQUIRES(env:DISPLAY)
             >>> from guitool_ibeis.api_tree_view import *  # NOQA
             >>> import guitool_ibeis as gt
             >>> app = gt.ensure_qapp()
