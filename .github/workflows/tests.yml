@@ -49,14 +49,14 @@ jobs:
       run: |-
         ls -al ./dist
         pip install dist/guitool_ibeis*.tar.gz -v
-    - name: Test minimal sdist
+    - name: Test minimal loose sdist
       run: |-
         pwd
         ls -al
         MOD_DPATH=$(python -c "import guitool_ibeis, os; print(os.path.dirname(guitool_ibeis.__file__))")
         echo "MOD_DPATH = $MOD_DPATH"
         python -m pytest -p pytester -p no:doctest --xdoctest --cov=guitool_ibeis $MOD_DPATH ./tests
-    - name: Test full sdist
+    - name: Test full loose sdist
       run: |-
         pwd
         ls -al
@@ -114,7 +114,7 @@ jobs:
       run: |-
         python -m pip install setuptools>=0.8 wheel
         python -m pip wheel --wheel-dir wheelhouse .
-    - name: Test pure wheel
+    - name: Test minimal loose pure wheel
       shell: bash
       env:
         CI_PYTHON_VERSION: py${{ matrix.python-version }}
@@ -152,7 +152,7 @@ jobs:
         echo '############ FIND'
         find . -name .coverage.*
         find . -name coverage.xml
-    - uses: actions/codecov-action@1
+    - uses: actions/codecov-action@v1
       name: Codecov Upload
       with:
         file: ./tests/coverage.xml
