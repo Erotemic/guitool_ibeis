@@ -534,6 +534,7 @@ class ProgHook(QtCore.QObject, ut.NiceRepr):
 
         Example:
             >>> # ENABLE_DOCTEST
+            >>> # xdoctest: +REQUIRES(env:DISPLAY)
             >>> from guitool_ibeis.guitool_components import *  # NOQA
             >>> import guitool_ibeis as gt
             >>> app = gt.ensure_qtapp()[0]
@@ -706,6 +707,7 @@ def newProgressBar(parent, visible=True, verticalStretch=1):
     Example:
         >>> # GUI_DOCTEST
         >>> # xdoctest: +REQUIRES(--gui)
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> # build test data
         >>> import guitool_ibeis
@@ -761,6 +763,7 @@ def newProgressBar(parent, visible=True, verticalStretch=1):
     Example:
         >>> # GUI_DOCTEST
         >>> # xdoctest: +REQUIRES(--gui)
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> # build test data
         >>> import guitool_ibeis
@@ -869,6 +872,7 @@ def newLabel(parent=None, text='', align='center', gpath=None, fontkw={},
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis
         >>> guitool_ibeis.ensure_qtapp()
@@ -1045,6 +1049,7 @@ class TagEdit(QtWidgets.QLineEdit):
 
         Example:
             >>> # DISABLE_DOCTEST
+            >>> # xdoctest: +REQUIRES(env:DISPLAY)
             >>> from guitool_ibeis.guitool_components import *  # NOQA
             >>> import guitool_ibeis as gt
             >>> gt.ensure_qtapp()
@@ -1300,6 +1305,7 @@ class GuitoolWidget(WIDGET_BASE):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qtapp()
@@ -1791,6 +1797,7 @@ def newButton(parent=None, text=None, clicked=None, pressed=None, qicon=None,
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qtapp()
@@ -1888,6 +1895,7 @@ def newComboBox(parent=None, options=None, changed=None, default=None,
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qtapp()
@@ -2038,6 +2046,7 @@ def newCheckBox(parent=None, text=None, changed=None, checked=False,
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> app = gt.ensure_qtapp()[0]
@@ -2174,6 +2183,7 @@ class Spoiler(WIDGET_BASE):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> # build test data
         >>> import guitool_ibeis
