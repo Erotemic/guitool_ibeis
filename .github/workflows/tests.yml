@@ -126,7 +126,7 @@ jobs:
         find . -name .coverage.*
         find . -name coverage.xml
     - name: Codecov Upload
-      uses: actions/codecov-action@v4
+      uses: actions/codecov-action@1
       with:
         file: ./tests/coverage.xml
     - name: Upload wheels artifact
