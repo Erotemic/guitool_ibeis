@@ -634,7 +634,7 @@ def simple_thumbnail_widget():
     from os.path import join
 
     #imgname_list = sorted(ut.TESTIMG_URL_DICT.keys())
-    imgname_list = ['carl.jpg', 'lena.png', 'patsy.jpg']
+    imgname_list = ['carl.jpg', 'astro.png', 'patsy.jpg']
     imgname_list += ['doesnotexist.jpg']
 
     num_imgs = list(range(len(imgname_list)))
@@ -665,7 +665,7 @@ def simple_thumbnail_widget():
         if id_ == 'carl.jpg':
             bbox_list = [(10, 10, 200, 200)]
             theta_list = [0]
-        elif id_ == 'lena.png':
+        elif id_ == 'astro.png':
             #bbox_list = [(10, 10, 200, 200)]
             bbox_list = [None]
             theta_list = [None]
