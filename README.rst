@@ -3,7 +3,7 @@ guitool_ibeis
 
 |Pypi| |Downloads| |Codecov| |Travis| |Appveyor| 
 
-Helpers for pyqt4/pyqt5 gui development for the IBEIS project.
+Helpers for PyQt5 GUI development for the IBEIS project.
 
 Depends on `vtool_ibeis` and `utool`.
 
