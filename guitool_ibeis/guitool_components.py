@@ -393,6 +393,7 @@ class ProgHook(QtCore.QObject, ut.NiceRepr):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.guitool_components import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> app = gt.ensure_qtapp()[0]

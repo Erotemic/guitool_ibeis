@@ -31,6 +31,7 @@ def simple_api_item_widget():
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.api_item_widget import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> gt.ensure_qapp()  # must be ensured before any embeding

@@ -62,6 +62,7 @@ def read_thumb_as_qimg(thumb_path):
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.api_thumb_delegate import *  # NOQA
         >>> import guitool_ibeis
         >>> # build test data

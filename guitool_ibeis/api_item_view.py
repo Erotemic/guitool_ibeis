@@ -318,6 +318,7 @@ def keyPressEvent(view, event):
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.api_item_view import *  # NOQA
         >>> import guitool_ibeis as gt
         >>> app = gt.ensure_qapp()[0]

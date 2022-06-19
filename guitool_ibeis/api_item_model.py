@@ -1035,9 +1035,11 @@ def simple_thumbnail_widget():
 
     CommandLine:
         python -m guitool_ibeis.api_item_model --test-simple_thumbnail_widget  --show
+        xdoctest -m guitool_ibeis.api_item_model simple_thumbnail_widget --show
 
     Example:
         >>> # ENABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> import guitool_ibeis
         >>> from guitool_ibeis.api_item_model import *  # NOQA
         >>> guitool_ibeis.ensure_qapp()  # must be ensured before any embeding
@@ -1061,7 +1063,7 @@ def simple_thumbnail_widget():
 
     col_getter_dict = {
         'rowid': [1, 2, 3],
-        'image_name': ['lena.png', 'carl.jpg', 'patsy.jpg'],
+        'image_name': ['astro.png', 'carl.jpg', 'patsy.jpg'],
         'thumb': thumb_getter
     }
     col_ider_dict = {

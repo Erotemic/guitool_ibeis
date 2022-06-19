@@ -35,6 +35,7 @@ class QtAbstractMplInteraction(BASE):
 
     Example:
         >>> # DISABLE_DOCTEST
+        >>> # xdoctest: +REQUIRES(env:DISPLAY)
         >>> from guitool_ibeis.mpl_embed import *  # NOQA
         >>> import plottool_ibeis as pt
         >>> import guitool_ibeis
