@@ -1,7 +1,7 @@
 # flake8: noqa
 from __future__ import absolute_import, division, print_function
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 import utool as ut
 ut.noinject(__name__, '[guitool_ibeis.__init__]')
