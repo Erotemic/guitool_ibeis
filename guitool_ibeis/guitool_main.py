@@ -30,7 +30,7 @@ class GuitoolApplication(QtWidgets.QApplication):
         self.keylog = []
 
     def notify(self, receiver, event):
-        if(event.type() == QtCore.QEvent.KeyPress):
+        if event.type() == QtCore.QEvent.KeyPress:
             if self.log_keys:
                 key = event.text()
                 print('key = %r' % (key,))
@@ -196,7 +196,7 @@ def ping_python_interpreter(frequency=420):  # 4200):
         return None
     timer.ping_func = ping_func
     timer.timeout.connect(timer.ping_func)
-    timer.start(frequency)
+    timer.start(int(frequency))
     return timer
 
 
