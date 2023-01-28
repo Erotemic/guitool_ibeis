@@ -12,8 +12,11 @@ version = "2.2.0"
 description = "Guitool - tools pyqt4 guis"
 url="https://github.com/Erotemic/guitool_ibeis"
 author="Jon Crall"
+version = "{mod_dpath}/__init__.py::__version__"
 author_email="erotemic@gmail.com"
+license = "Apache 2"
 dev_status = "beta"
+min_python = 3.7
 autostage = true
 os = [ "linux" ]
 

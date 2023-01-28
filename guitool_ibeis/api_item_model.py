@@ -2,26 +2,19 @@
 TODO:
     Fix slowness
     Fix sorting so columns are initially sorted in ascending order
-
-
 """
-from __future__ import absolute_import, division, print_function
 from guitool_ibeis.__PYQT__ import QtCore, QtGui, QVariantHack
 from guitool_ibeis.__PYQT__.QtCore import Qt
 from guitool_ibeis import qtype
 from guitool_ibeis.guitool_decorators import checks_qt_error, signal_  # NOQA
-from six.moves import zip  # builtins  # NOQA
-#from utool._internal.meta_util_six import get_funcname
 import functools
 import utool as ut
-#from .api_thumb_delegate import APIThumbDelegate
 import numpy as np
 from guitool_ibeis import api_tree_node as _atn
 import cachetools
 
 # UTOOL PRINT STATEMENTS CAUSE RACE CONDITIONS IN QT THAT CAN LEAD TO SEGFAULTS
 # DO NOT INJECT THEM IN GUITOOL
-#print, rrr, profile = ut.inject2(__name__)
 ut.noinject(__name__, '[APIItemModel]')
 
 #raise ImportError('refused to import guitool_ibeis')
@@ -370,8 +363,7 @@ class APIItemModel(API_MODEL_BASE):
                         values[np.isnan(values)] = -np.inf
                     elif type_ is str:
                         values = ut.replace_nones(values, '')
-                    import vtool_ibeis as vt
-                    sortx = vt.argsort_records([values, id_list], reverse=reverse)
+                    sortx = argsort_records([values, id_list], reverse=reverse)
                     # </NUMPY MULTIARRAY SORT>
                     nodes = ut.take(children, sortx)
                     level = model.col_level_list[sort_index]
@@ -1087,6 +1079,38 @@ def simple_thumbnail_widget():
     wgt.change_headers(headers)
     #guitool_ibeis.qtapp_loop(qwin=wgt, ipy=ipy, frequency=loop_freq)
     return wgt
+
+
+def argsort_records(arrays, reverse=False):
+    r"""
+    Sorts arrays that form records.
+    Same as lexsort(arrays[::-1]) --- ie. rows are reversed.
+
+    Args:
+        arrays (ndarray): array of records
+        reverse (bool): (default = False)
+
+    Returns:
+        ndarray: sortx - sorted indicies
+
+    Example:
+        >>> # ENABLE_DOCTEST
+        >>> arrays = np.array([
+        >>>     [1, 1, 1, 2, 2, 2, 3, 4, 5],
+        >>>     [2, 0, 2, 6, 4, 3, 2, 5, 6],
+        >>>     [1, 1, 0, 2, 3, 4, 5, 6, 7],
+        >>> ],)
+        >>> reverse = False
+        >>> sortx = argsort_records(arrays, reverse)
+        >>> result = ('sortx = %s' % (str(sortx),))
+        >>> print('lxsrt = %s' % (np.lexsort(arrays[::-1]),))
+        >>> print(result)
+        sortx = [1 2 0 5 4 3 6 7 8]
+    """
+    sorting_records = np.rec.fromarrays(arrays)
+    sort_stride = (-reverse * 2) + 1
+    sortx = sorting_records.argsort()[::sort_stride]
+    return sortx
 
 
 if __name__ == '__main__':
