@@ -1,8 +1,14 @@
 six >= 1.10.0
-ubelt 
+ubelt >= 1.2.2
 utool >= 2.0.0
 
-matplotlib
+matplotlib>=3.5.0     ; python_version < '4.0'  and python_version >= '3.11'    # Python 3.11+
+matplotlib>=3.5.0     ; python_version < '3.11' and python_version >= '3.10'    # Python 3.10
+matplotlib>=3.3.3     ; python_version < '3.10' and python_version >= '3.9'     # Python 3.9
+matplotlib>=3.6.0     ; python_version < '3.9'  and python_version >= '3.8'     # Python 3.8
+matplotlib>=2.2.2     ; python_version < '3.8'  and python_version >= '3.7'     # Python 3.7
+matplotlib>=1.5.3     ; python_version < '3.7'  and python_version >= '3.6'     # Python 3.6
+
 
 vtool_ibeis >= 2.0.0
 pyflann_ibeis >= 2.0.0
