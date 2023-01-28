@@ -8,7 +8,6 @@ ignore_missing_imports = true
 tags = [ "github", "erotemic", "purepy", "cv2"]
 mod_name = "guitool_ibeis"
 repo_name = "guitool_ibeis"
-version = "2.2.0"
 description = "Guitool - tools pyqt4 guis"
 url="https://github.com/Erotemic/guitool_ibeis"
 author="Jon Crall"
