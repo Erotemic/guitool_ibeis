@@ -8,7 +8,7 @@ ignore_missing_imports = true
 tags = [ "github", "erotemic", "purepy", "cv2"]
 mod_name = "guitool_ibeis"
 repo_name = "guitool_ibeis"
-description = "Guitool - tools pyqt4 guis"
+description = "Guitool - tools for PyQt5 guis"
 url="https://github.com/Erotemic/guitool_ibeis"
 author="Jon Crall"
 version = "{mod_dpath}/__init__.py::__version__"
@@ -16,6 +16,8 @@ author_email="erotemic@gmail.com"
 license = "Apache 2"
 dev_status = "beta"
 min_python = 3.7
+# ci_cpython_versions = ["3.7", "3.8", "3.9", "3.10"]
+supported_python_versions = ["3.7", "3.8", "3.9", "3.10"]
 autostage = true
 os = [ "linux" ]
 
