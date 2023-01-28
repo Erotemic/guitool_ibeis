@@ -10,7 +10,7 @@ matplotlib>=2.2.2     ; python_version < '3.8'  and python_version >= '3.7'     
 matplotlib>=1.5.3     ; python_version < '3.7'  and python_version >= '3.6'     # Python 3.6
 
 
-vtool_ibeis >= 2.1.1
+vtool_ibeis >= 2.2.0
 pyflann_ibeis >= 2.2.0
 
 pyqt5>= 5.11.2;python_version>'2.7'  # 
