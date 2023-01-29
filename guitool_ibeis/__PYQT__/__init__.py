@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # flake8:noqa
 from __future__ import absolute_import, division, print_function, unicode_literals
 import utool as ut
@@ -27,7 +26,6 @@ def QVariantHack(*args):
         return args[0]
     else:
         raise NotImplementedError(str(args))
-
 
 
 try:

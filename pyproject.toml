@@ -5,15 +5,20 @@ requires = [ "setuptools>=41.0.1", "wheel>=0.37.1",]
 ignore_missing_imports = true
 
 [tool.xcookie]
-tags = [ "github", "erotemic", "purepy", "cv2"]
+tags = [ "github", "erotemic", "purepy", "cv2", "notypes" ]
 mod_name = "guitool_ibeis"
 repo_name = "guitool_ibeis"
-version = "2.2.0"
-description = "Guitool - tools pyqt4 guis"
+description = "Guitool - tools for PyQt5 guis"
 url="https://github.com/Erotemic/guitool_ibeis"
 author="Jon Crall"
+version = "{mod_dpath}/__init__.py::__version__"
 author_email="erotemic@gmail.com"
+license = "Apache 2"
 dev_status = "beta"
+min_python = 3.7
+# ci_cpython_versions = ["3.7", "3.8", "3.9", "3.10"]
+supported_python_versions = ["3.7", "3.8", "3.9", "3.10"]
+ci_pypy_versions = []
 autostage = true
 os = [ "linux" ]
 

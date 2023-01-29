@@ -1,11 +1,9 @@
-from __future__ import absolute_import, division, print_function
 try:
     from guitool_ibeis import api_tree_node_cython
-    if 'api_tree_node_cython' not in globals():
-        raise ImportError('')
-    print('[test_treenode] cython ON')
 except ImportError:
     print('[test_treenode] cython OFF')
+else:
+    print('[test_treenode] cython ON')
 from guitool_ibeis import api_tree_node
 
 
@@ -40,7 +38,7 @@ def _test_build_internal_structure(_module, lang):
         return range(N)
 
     def ider_level1(input_):
-        _single = lambda x: [y for y in range(x ** 2, x ** 2 + max(0, ((N // 1) - x - 1)))]
+        _single = lambda x: [y for y in range(x ** 2, x ** 2 + max(0, ((N // 1) - x - 1)))]  # NOQA
         if isinstance(input_, list):
             return [_single(x) for x in input_]
         else:
