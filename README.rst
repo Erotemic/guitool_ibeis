@@ -1,7 +1,7 @@
 guitool_ibeis
 =============
 
-|GithubActions| |Pypi| |Downloads| |Codecov| |Travis| |Appveyor| 
+|GithubActions| |Pypi| |Downloads| |Codecov| 
 
 Helpers for PyQt5 GUI development for the IBEIS project.
 
