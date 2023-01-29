@@ -118,21 +118,9 @@ jobs:
           os: ubuntu-latest
           install-extras: tests,optional,headless
           arch: auto
-        - python-version: pypy-3.7
-          os: ubuntu-latest
-          install-extras: tests,optional,headless
-          arch: auto
     steps:
     - name: Checkout source
       uses: actions/checkout@v3
-    - name: Enable MSVC 64bit
-      uses: ilammy/msvc-dev-cmd@v1
-      if: matrix.os == 'windows-latest' && matrix.cibw_skip == '*-win32'
-    - name: Enable MSVC 32bit
-      uses: ilammy/msvc-dev-cmd@v1
-      if: matrix.os == 'windows-latest' && matrix.cibw_skip == '*-win_amd64'
-      with:
-        arch: x86
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       if: runner.os == 'Linux' && matrix.arch != 'auto'
