@@ -1,4 +1,4 @@
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 import utool as ut
 ut.noinject(__name__, '[guitool_ibeis.__init__]')
