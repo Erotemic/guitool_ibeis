@@ -981,7 +981,7 @@ class EditConfigWidget(QtWidgets.QWidget):
 
     def init_mvc(self):
         import operator
-        from six.moves import reduce
+        from functools import reduce
         edit_triggers = reduce(operator.__or__, [
             QtWidgets.QAbstractItemView.CurrentChanged,
             QtWidgets.QAbstractItemView.DoubleClicked,

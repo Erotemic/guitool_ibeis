@@ -5,7 +5,6 @@ import six
 import utool
 import sys
 import logging
-from six.moves import range
 from guitool_ibeis.guitool_decorators import slot_
 from guitool_ibeis import guitool_main
 import utool as ut

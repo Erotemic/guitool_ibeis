@@ -1,8 +1,7 @@
 # TODO: Rename api_item_model
 from __future__ import absolute_import, division, print_function
-from guitool_ibeis.__PYQT__ import QtCore  # NOQA
+from guitool_ibeis.__PYQT__ import QtCore
 from types import GeneratorType
-from six.moves import zip, range
 import utool
 import utool as ut
 (print, print_, rrr) = utool.inject2(__name__)

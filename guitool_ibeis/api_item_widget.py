@@ -8,9 +8,7 @@ from guitool_ibeis.__PYQT__ import QtWidgets
 from guitool_ibeis.api_item_model import APIItemModel
 from guitool_ibeis.api_table_view import APITableView
 from guitool_ibeis.api_tree_view import APITreeView
-#from guitool_ibeis import guitool_components as comp
 from functools import partial
-from six.moves import range
 import utool as ut
 import six
 (print, rrr, profile) = ut.inject2(__name__, '[APIItemWidget]')

@@ -1,5 +1,4 @@
 from __future__ import absolute_import, division, print_function
-from six.moves import map
 from guitool_ibeis.__PYQT__ import QtCore, QtGui  # NOQA
 from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 from guitool_ibeis.__PYQT__.QtCore import Qt

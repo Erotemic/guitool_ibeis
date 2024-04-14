@@ -13,7 +13,6 @@ from guitool_ibeis import api_button_delegate
 from guitool_ibeis import api_thumb_delegate
 from guitool_ibeis import guitool_main
 from guitool_ibeis import guitool_misc
-from six.moves import range, reduce  # NOQA
 import utool
 import utool as ut
 import operator

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 import six
-from six.moves import map, range  # NOQA
 from guitool_ibeis.__PYQT__ import QtCore, QtGui
 from guitool_ibeis.__PYQT__ import QtWidgets
 from guitool_ibeis.__PYQT__.QtCore import Qt
