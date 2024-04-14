@@ -16,6 +16,7 @@ from guitool_ibeis import guitool_misc
 import utool
 import utool as ut
 import operator
+from functools import reduce
 # Valid API Models
 from guitool_ibeis.stripe_proxy_model import StripeProxyModel
 from guitool_ibeis.filter_proxy_model import FilterProxyModel
@@ -395,7 +396,7 @@ def itemDelegate(view, qindex):
 
 def setModel(view, model):
     """ QtOverride: Returns item delegate for this index """
-    assert isinstance(model, VALID_API_MODELS),\
+    assert isinstance(model, VALID_API_MODELS), \
             ('APIItemViews only accepts APIItemModels (or one of its proxys),'
              'received a %r' % type(model))
     # Learn some things about the model before you fully connect it.
