@@ -5,7 +5,6 @@ from guitool_ibeis.__PYQT__ import QtWidgets
 from guitool_ibeis.__PYQT__.QtCore import Qt
 from guitool_ibeis.guitool_delegates import ComboDelegate, ButtonDelegate
 from guitool_ibeis import qtype
-from six.moves import range, map
 import utool
 (print, rrr, profile) = utool.inject2(__name__)
 

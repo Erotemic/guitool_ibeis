@@ -756,7 +756,8 @@ class ConfigNodeWrapper(ut.NiceRepr):
 
     def iter_children(self):
         if self.children is None:
-            raise StopIteration()
+            return None
+            # raise StopIteration()
         for child in self.children:
             yield child
 
@@ -980,7 +981,7 @@ class EditConfigWidget(QtWidgets.QWidget):
 
     def init_mvc(self):
         import operator
-        from six.moves import reduce
+        from functools import reduce
         edit_triggers = reduce(operator.__or__, [
             QtWidgets.QAbstractItemView.CurrentChanged,
             QtWidgets.QAbstractItemView.DoubleClicked,
