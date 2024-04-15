@@ -449,6 +449,7 @@ jobs:
         tag_name: ${{ github.ref }}
         name: Release ${{ github.ref }}
         body: Automatic Release
+        generate_release_notes: true
         draft: true
         prerelease: false
         files: |-
