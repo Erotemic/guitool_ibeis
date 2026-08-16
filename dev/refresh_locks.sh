@@ -13,6 +13,15 @@ cd "$(dirname "$0")/.."
 
 uv lock
 
-# Strict CI variant extras: runtime
+# Strict CI variant extras: tests, headless
 uv export --frozen --no-emit-project --format requirements.txt --no-hashes \
-    -o requirements/locks/runtime.txt
+    --extra tests \
+    --extra headless \
+    -o requirements/locks/tests-headless.txt
+
+# Strict CI variant extras: tests, optional, headless
+uv export --frozen --no-emit-project --format requirements.txt --no-hashes \
+    --extra tests \
+    --extra optional \
+    --extra headless \
+    -o requirements/locks/tests-optional-headless.txt
