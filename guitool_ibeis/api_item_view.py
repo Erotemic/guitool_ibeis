@@ -3,6 +3,7 @@
 provides common methods for api_tree_view and api_table_view
 """
 from __future__ import absolute_import, division, print_function
+from loguru import logger
 from guitool_ibeis.__PYQT__ import QtGui  # NOQA
 from guitool_ibeis.__PYQT__ import QtCore
 from guitool_ibeis.__PYQT__ import QtWidgets
@@ -22,7 +23,6 @@ from guitool_ibeis.stripe_proxy_model import StripeProxyModel
 from guitool_ibeis.filter_proxy_model import FilterProxyModel
 from guitool_ibeis.api_item_model import APIItemModel
 
-(print, rrr, profile) = utool.inject2(__name__, '[APIItemView]')
 
 VERBOSE_QT = ut.get_argflag(('--verbose-qt', '--verbqt'))
 VERBOSE_ITEM_VIEW = ut.get_argflag(('--verbose-item-view'))
@@ -145,7 +145,7 @@ def infer_delegates(view, **headers):
     for colx, coltype in enumerate(col_type_list):
         if coltype in  qtype.QT_PIXMAP_TYPES:
             if VERBOSE:
-                print('[view] colx=%r is a PIXMAP' % colx)
+                logger.info('[view] colx=%r is a PIXMAP' % colx)
             thumb_delegate = api_thumb_delegate.APIThumbDelegate(view, get_thumb_size)
             view.setItemDelegateForColumn(colx, thumb_delegate)
             view.has_thumbs = True
@@ -154,16 +154,16 @@ def infer_delegates(view, **headers):
             #verticalHeader.setDefaultSectionSize(256)
         elif coltype in qtype.QT_BUTTON_TYPES:
             if VERBOSE:
-                print('[view] colx=%r is a BUTTON' % colx)
+                logger.info('[view] colx=%r is a BUTTON' % colx)
             button_delegate = api_button_delegate.APIButtonDelegate(view)
             view.setItemDelegateForColumn(colx, button_delegate)
         elif isinstance(coltype, QtWidgets.QAbstractItemDelegate):
             if VERBOSE:
-                print('[view] colx=%r is a CUSTOM DELEGATE' % colx)
+                logger.info('[view] colx=%r is a CUSTOM DELEGATE' % colx)
             view.setItemDelegateForColumn(colx, coltype)
         else:
             if VERBOSE:
-                print('[view] colx=%r does not have a delgate' % colx)
+                logger.info('[view] colx=%r does not have a delgate' % colx)
             # Effectively unsets any existing delegates
             default_delegate = QtWidgets.QStyledItemDelegate(view)
             view.setItemDelegateForColumn(colx, default_delegate)
@@ -173,7 +173,7 @@ def infer_delegates(view, **headers):
 def set_column_persistant_editor(view, column):
     """ Set each row in a column as persistant """
     num_rows = view.model.rowCount()
-    print('view.set_persistant: %r rows' % num_rows)
+    logger.info('view.set_persistant: %r rows' % num_rows)
     for row in range(num_rows):
         index  = view.model.index(row, column)
         view.view.openPersistentEditor(index)
@@ -193,7 +193,7 @@ def _update_headers(view, **headers):
     view._set_sort(col_sort_index, col_sort_reverse)
     view.infer_delegates(**headers)
     if ut.VERBOSE:
-        print('[view] updating headers')
+        logger.info('[view] updating headers')
     col_width_list = headers.get('col_width_list', None)
     if col_width_list is not None:
         if isinstance(view, QtWidgets.QTreeView):
@@ -401,7 +401,7 @@ def setModel(view, model):
              'received a %r' % type(model))
     # Learn some things about the model before you fully connect it.
     if VERBOSE:
-        print('[view] setting model')
+        logger.info('[view] setting model')
     model._rows_updated.connect(view.on_rows_updated)
     #view.infer_delegates_from_model(model=model)
     # TODO: Update headers
@@ -417,16 +417,16 @@ def setModel(view, model):
 def copy_selection_to_clipboard(view):
     """ Copys selected grid to clipboard """
     if VERBOSE:
-        print('[guitool_ibeis] Copying selection to clipboard')
+        logger.info('[guitool_ibeis] Copying selection to clipboard')
     copy_str = guitool_misc.get_view_selection_as_str(view)
     #copy_qstr = QtCore.Q__String(copy_str)
     copy_qstr = str(copy_str)
     clipboard = guitool_main.get_qtapp().clipboard()
     if VERBOSE:
-        print(copy_str)
+        logger.info(copy_str)
     clipboard.setText(copy_qstr)
     if VERBOSE:
-        print('[guitool_ibeis] finished copy')
+        logger.info('[guitool_ibeis] finished copy')
 
 
 if __name__ == '__main__':

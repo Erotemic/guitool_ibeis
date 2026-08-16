@@ -1,10 +1,10 @@
 # TODO: Rename api_item_model
 from __future__ import absolute_import, division, print_function
+from loguru import logger
 from guitool_ibeis.__PYQT__ import QtCore
 from types import GeneratorType
 import utool
 import utool as ut
-(print, print_, rrr) = utool.inject2(__name__)
 
 
 TREE_NODE_BASE = QtCore.QObject
@@ -36,7 +36,7 @@ class TreeNode(TREE_NODE_BASE):
     def __del__(self):
         #print('[guitool_ibeis] DELETING THE TREE NODE!:')
         if VERBOSE_TREE_NODE:
-            print('[guitool_ibeis] DELETING THE TREE NODE!: id_=%r' % self.id_)
+            logger.info('[guitool_ibeis] DELETING THE TREE NODE!: id_=%r' % self.id_)
 
     def __getitem__(self, index):
         """
@@ -124,7 +124,7 @@ class TreeNode(TREE_NODE_BASE):
         # If the child is a generator, then the TreeNode hasn't been created yet
         # so create it
         if isinstance(self.child_nodes, GeneratorType):
-            print('[tree_node] lazy evaluation level=%r' % self.level)
+            logger.info('[tree_node] lazy evaluation level=%r' % self.level)
             #print('[tree_node] lazy evaluation level=%r' % self.level)
             self.child_nodes = list(self.child_nodes)
 
@@ -231,9 +231,9 @@ def _populate_tree_iterative(root_node, num_levels, ider_list):
     parent_node_list = [root_node]
     ids_list = [root_ids]
     if VERBOSE_TREE_NODE:
-        print('_populate_tree_iterative')
-        print('root_ids = %r' % (root_ids,))
-        print('num_levels = %r' % (num_levels,))
+        logger.info('_populate_tree_iterative')
+        logger.info('root_ids = %r' % (root_ids,))
+        logger.info('num_levels = %r' % (num_levels,))
     for level in range(num_levels):
         #print('------------ level=%r -----------' % (level,))
         #print(utool.repr2(locals()))
@@ -395,9 +395,9 @@ def build_internal_structure(model):
         _populate_tree_iterative(root_node, num_levels, ider_list)
 
     if VERBOSE_TREE_NODE:
-        print('ider_list = %r' % (ider_list,))
+        logger.info('ider_list = %r' % (ider_list,))
         infostr = tree_node_string(root_node, charids=2)
-        print(infostr)
+        logger.info(infostr)
         # print(ut.repr3(root_node.__dict__))
     #assert root_node.__dict__, "root_node.__dict__ is empty"
     return root_node

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+from loguru import logger
 import six
 from guitool_ibeis.__PYQT__ import QtCore, QtGui
 from guitool_ibeis.__PYQT__ import QtWidgets
@@ -9,7 +10,6 @@ import utool as ut
 import ubelt as ub
 from guitool_ibeis import guitool_dialogs
 import weakref
-(print, rrr, profile) = ut.inject2(__name__)
 
 DEBUG_WIDGET = ut.get_argflag(('--dbgwgt', '--debugwidget', '--debug-widget'))
 
@@ -319,7 +319,7 @@ PROG_TEXT = ub.argflag('--progtext')
 class GuiProgContext(object):
     def __init__(ctx, title, prog_bar):
         if PROG_TEXT:
-            print('[guitool_ibeis] GuiProgContext.__init__')
+            logger.info('[guitool_ibeis] GuiProgContext.__init__')
         ctx.prog_bar = prog_bar
         ctx.title = title
         ctx.total = None
@@ -342,7 +342,7 @@ class GuiProgContext(object):
 
     def __enter__(ctx):
         if PROG_TEXT:
-            print('[guitool_ibeis] GuiProgContext.__enter__')
+            logger.info('[guitool_ibeis] GuiProgContext.__enter__')
         ctx.prog_bar.setVisible(True)
         ctx.prog_bar.setWindowTitle(ctx.title)
         ctx.prog_hook.lbl = ctx.title
@@ -354,11 +354,11 @@ class GuiProgContext(object):
 
     def __exit__(ctx, type_, value, trace):
         if PROG_TEXT:
-            print('[guitool_ibeis] GuiProgContext.__exit__')
+            logger.info('[guitool_ibeis] GuiProgContext.__exit__')
         ctx.prog_bar.setVisible(False)
         if trace is not None:
             if ut.VERBOSE:
-                print('[back] Error in context manager!: ' + str(value))
+                logger.info('[back] Error in context manager!: ' + str(value))
             return False  # return a falsey value on error
 
 
@@ -647,9 +647,9 @@ class ProgHook(QtCore.QObject, ut.NiceRepr):
             resolution = 75
             num_full = int(round(global_fraction * resolution))
             num_empty = resolution - num_full
-            print('\n')
-            print('[' + '#' * num_full + '.' * num_empty + '] %7.3f%% %s' % (global_fraction * 100, hook.lbl))
-            print('\n')
+            logger.info('\n')
+            logger.info('[' + '#' * num_full + '.' * num_empty + '] %7.3f%% %s' % (global_fraction * 100, hook.lbl))
+            logger.info('\n')
         prog_bar = hook.prog_bar
         if prog_bar is not None:
             prog_bar.setRange(0, 10000)
@@ -1483,7 +1483,7 @@ def walk_widget_heirarchy(obj, **kwargs):
 def print_widget_heirarchy(obj, *args, **kwargs):
     lines = walk_widget_heirarchy(obj, *args, **kwargs)
     text = '\n'.join(lines)
-    print(text)
+    logger.info(text)
 
 
 def fix_child_attr_heirarchy(obj, attr, val):
@@ -1646,16 +1646,16 @@ class ConfigConfirmWidget(GuitoolWidget):
         # Set default button
 
     def update_state(self, *args):
-        print('*args = %r' % (args,))
-        print('Update state')
+        logger.info('*args = %r' % (args,))
+        logger.info('Update state')
         if self.param_info_dict is None:
-            print('Need dtool_ibeis config')
+            logger.info('Need dtool_ibeis config')
 
         for key, pi in self.param_info_dict.items():
             row = self.row_dict[key]
             if pi.type_ is bool:
                 value = row.edit.currentValue()
-                print('Changed: key, value = %r, %r' % (key, value))
+                logger.info('Changed: key, value = %r, %r' % (key, value))
                 self.config[key] = value
 
         for key, pi in self.param_info_dict.items():
@@ -1664,8 +1664,8 @@ class ConfigConfirmWidget(GuitoolWidget):
             row.edit.setEnabled(flag)
 
     def confirm(self, confirm_option=None):
-        print('[gt] Confirmed config')
-        print('confirm_option = %r' % (confirm_option,))
+        logger.info('[gt] Confirmed config')
+        logger.info('confirm_option = %r' % (confirm_option,))
         self.confirm_option = confirm_option
         self.close()
 
@@ -1721,8 +1721,8 @@ class ConfigConfirmWidget(GuitoolWidget):
         #    return s
 
         def _adjust_widget(w):
-            print('-----------')
-            print('w = %r' % (w,))
+            logger.info('-----------')
+            logger.info('w = %r' % (w,))
             orig_size = w.size()
             hint_size = w.sizeHint()
             #adj_size = adjusted_size(w)
@@ -1732,13 +1732,13 @@ class ConfigConfirmWidget(GuitoolWidget):
             #height = min(adj_size.height(), hint_size.height())
             height = hint_size.height()
             newsize = (orig_size.width(), height)
-            print('orig_size = %r' % (orig_size,))
-            print('hint_size = %r' % (hint_size,))
-            print('adj_size = %r' % (adj_size,))
-            print('newsize = %r' % (newsize,))
+            logger.info('orig_size = %r' % (orig_size,))
+            logger.info('hint_size = %r' % (hint_size,))
+            logger.info('adj_size = %r' % (adj_size,))
+            logger.info('newsize = %r' % (newsize,))
             #w.setMinimumSize(*newsize)
             w.resize(*newsize)
-            print('Actual new size = %r' % (w.size()))
+            logger.info('Actual new size = %r' % (w.size()))
 
         if hasattr(self, 'topLevelWidget'):
             top = self.topLevelWidget()
@@ -1755,7 +1755,7 @@ class ConfigConfirmWidget(GuitoolWidget):
         #    _adjust_widget(parent)
 
     def cancel(self):
-        print('[gt] Canceled confirm config')
+        logger.info('[gt] Canceled confirm config')
         self.close()
 
 
@@ -2744,8 +2744,8 @@ class ComboRadioHybrid(GuitoolWidget):
                     self.combo.setItemData(i, Qt.AlignCenter, Qt.TextAlignmentRole)
 
                 for i in range(len(self.combo_options)):
-                    print(self.combo.itemData(0))
-                    print(model.itemData(model.index(i, 0)))
+                    logger.info(self.combo.itemData(0))
+                    logger.info(model.itemData(model.index(i, 0)))
             else:
                 self.combo.setEditable(True)
                 self.combo.lineEdit().setAlignment(QtCore.Qt.AlignCenter)

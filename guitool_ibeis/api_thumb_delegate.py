@@ -48,7 +48,6 @@ def test_show_qimg(qimg):
     return lbl
 
 
-#@ut.memprof
 def read_thumb_as_qimg(thumb_path):
     r"""
     Args:

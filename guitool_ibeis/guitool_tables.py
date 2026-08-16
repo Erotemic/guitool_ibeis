@@ -1,12 +1,12 @@
 # DEPRICATE?
 from __future__ import absolute_import, division, print_function
+from loguru import logger
 from guitool_ibeis.__PYQT__ import QtCore, QtGui
 from guitool_ibeis.__PYQT__ import QtWidgets
 from guitool_ibeis.__PYQT__.QtCore import Qt
 from guitool_ibeis.guitool_delegates import ComboDelegate, ButtonDelegate
 from guitool_ibeis import qtype
 import utool
-(print, rrr, profile) = utool.inject2(__name__)
 
 
 class ColumnListTableView(QtWidgets.QTableView):
@@ -21,8 +21,8 @@ class ColumnListTableView(QtWidgets.QTableView):
 
     @QtCore.pyqtSlot()
     def cellButtonClicked(self):
-        print(self.sender())
-        print(self.sender().text())
+        logger.info(self.sender())
+        logger.info(self.sender().text())
 
 
 class ColumnListItemModel(QtCore.QAbstractTableModel):
@@ -98,7 +98,7 @@ class ColumnListItemModel(QtCore.QAbstractTableModel):
     def _change_row_indices(model):
         """  Non-Qt Helper """
         if model.sortcolumn is not None:
-            print('using: sortcolumn=%r' % model.sortcolumn)
+            logger.info('using: sortcolumn=%r' % model.sortcolumn)
             column_data = model.col_data_list[model.sortcolumn]
             indices = list(range(len(column_data)))
             model.row_sortx = utool.sortedby(indices, column_data,
@@ -135,7 +135,7 @@ class ColumnListItemModel(QtCore.QAbstractTableModel):
             assert utool.is_int(col_sort_index), 'sort by an index not %r' % type(col_sort_index)
             model.sortcolumn = col_sort_index
             assert model.sortcolumn < len(model.col_name_list), 'outofbounds'
-            print('sortcolumn: %r' % model.sortcolumn)
+            logger.info('sortcolumn: %r' % model.sortcolumn)
 
     def set_data(model, index, data):
         """ Non-Qt Helper """
@@ -210,7 +210,7 @@ class ColumnListItemModel(QtCore.QAbstractTableModel):
         """ Sets the role data for the item at index to var.
         var is a QVariant (called data in documentation)
         """
-        print('[model] setData: %r' % (str(qtype.qindexinfo(index))))
+        logger.info('[model] setData: %r' % (str(qtype.qindexinfo(index))))
         try:
             if not index.isValid():
                 return None
@@ -227,7 +227,7 @@ class ColumnListItemModel(QtCore.QAbstractTableModel):
                 type_ = model.get_coltype(index.column())
                 data = qtype.cast_from_qt(var, type_)
             # Do actual setting of data
-            print(' * new_data = %s(%r)' % (utool.type_str(type_), data,))
+            logger.info(' * new_data = %s(%r)' % (utool.type_str(type_), data,))
             model.set_data(index, data)
             # Emit that data was changed and return succcess
             model.dataChanged.emit(index, index)
@@ -297,7 +297,7 @@ class ColumnListTableWidget(QtWidgets.QWidget):
         """
         marked_columns = []  # these will be persistantly editable
         if col_type_list is not None:
-            print('cltw.change_data: %r' % len(col_type_list))
+            logger.info('cltw.change_data: %r' % len(col_type_list))
             col_type_list = list(col_type_list)
             for column in range(len(col_type_list)):
                 if isinstance(col_type_list[column], tuple):
@@ -306,7 +306,7 @@ class ColumnListTableWidget(QtWidgets.QWidget):
                     if cltw.set_column_as_delegate(column, delegate_type):
                         marked_columns.append(column)
         else:
-            print('cltw.change_data: None')
+            logger.info('cltw.change_data: None')
         cltw.model._change_data(col_data_list, col_name_list, niceheader_list,
                                 col_type_list, col_edit_list,
                                 display_indices, col_sort_index)
@@ -316,11 +316,11 @@ class ColumnListTableWidget(QtWidgets.QWidget):
 
     def set_column_as_delegate(cltw, column, delegate_type):
         if delegate_type == 'COMBO':
-            print('cltw.set_col_del %r %r' % (column, delegate_type))
+            logger.info('cltw.set_col_del %r %r' % (column, delegate_type))
             cltw.view.setItemDelegateForColumn(column, ComboDelegate(cltw.view))
             return True
         elif delegate_type == 'BUTTON':
-            print('cltw.set_col_del %r %r' % (column, delegate_type))
+            logger.info('cltw.set_col_del %r %r' % (column, delegate_type))
             cltw.view.setItemDelegateForColumn(column, ButtonDelegate(cltw.view))
             return False
 
@@ -329,7 +329,7 @@ class ColumnListTableWidget(QtWidgets.QWidget):
         Set each row in a column as persistant
         """
         num_rows = cltw.model.rowCount()
-        print('cltw.set_persistant: %r rows' % num_rows)
+        logger.info('cltw.set_persistant: %r rows' % num_rows)
         for row in range(num_rows):
             index  = cltw.model.index(row, column)
             cltw.view.openPersistentEditor(index)

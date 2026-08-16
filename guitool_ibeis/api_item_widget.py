@@ -3,6 +3,7 @@ This module contains functions and clases to get data visualized fast (in
 terms of development time)
 """
 from __future__ import absolute_import, division, print_function
+from loguru import logger
 from guitool_ibeis.__PYQT__ import QtCore
 from guitool_ibeis.__PYQT__ import QtWidgets
 from guitool_ibeis.api_item_model import APIItemModel
@@ -11,7 +12,6 @@ from guitool_ibeis.api_tree_view import APITreeView
 from functools import partial
 import utool as ut
 import six
-(print, rrr, profile) = ut.inject2(__name__, '[APIItemWidget]')
 
 
 WIDGET_BASE = QtWidgets.QWidget
@@ -151,7 +151,7 @@ class CustomAPI(object):
                  sort_reverse=False, col_width_dict={}, strict=False,
                  col_display_role_func_dict=None, **kwargs):
         if VERBOSE_ITEM_WIDGET:
-            print('[CustomAPI] <__init__>')
+            logger.info('[CustomAPI] <__init__>')
         if col_name_list is None:
             col_name_list = sorted(list(col_getter_dict.keys()))
         self.col_width_dict = col_width_dict
@@ -175,7 +175,7 @@ class CustomAPI(object):
         self.orig_kwargs = kwargs
         self.update_column_names(col_name_list)
         if VERBOSE_ITEM_WIDGET:
-            print('[CustomAPI] </__init__>')
+            logger.info('[CustomAPI] </__init__>')
 
     def update_column_names(self, col_name_list):
         self.parse_column_tuples(col_name_list, *self.orig_data_tup, **self.orig_kwargs)
@@ -209,7 +209,7 @@ class CustomAPI(object):
             flag_list = [colname in col_getter_dict for colname in col_name_list]
             if not all(flag_list):
                 invalid_colnames = ut.compress(col_name_list, ut.not_list(flag_list))
-                print('[api_item_widget] Warning: colnames=%r have no getters' % (
+                logger.info('[api_item_widget] Warning: colnames=%r have no getters' % (
                     invalid_colnames,))
                 col_name_list = ut.compress(col_name_list, flag_list)
             # sloppy type inference
@@ -328,8 +328,8 @@ class CustomAPI(object):
             try:
                 val = getter[index]
             except IndexError:
-                print('index error at column index=%r' % (index))
-                print('getter = %r' % (getter,))
+                logger.info('index error at column index=%r' % (index))
+                logger.info('getter = %r' % (getter,))
                 # print('index for column=%r' % (self.column_names[index]))
                 raise
         else:
@@ -496,7 +496,7 @@ class APIItemWidget(WIDGET_BASE):
 
     def on_rows_updated(widget, name, num):
         if VERBOSE_ITEM_WIDGET:
-            print('rows updated')
+            logger.info('rows updated')
         pass
 
     def refresh_headers(widget):
@@ -519,15 +519,15 @@ class APIItemWidget(WIDGET_BASE):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex, QtCore.QPoint)
     def on_contextMenuRequested(widget, index, pos):
-        print('context request')
+        logger.info('context request')
         if widget.api is not None:
-            print(ut.repr2(widget.api.get_available_colnames()))
+            logger.info(ut.repr2(widget.api.get_available_colnames()))
             # HACK test
             #widget.api.add_column_names(['qx2_gt_rank', 'qx2_gf_rank', 'qx2_gt_raw_score', 'qx2_gf_raw_score'])
             widget.refresh_headers()
             #widget.change_headers(widget.api.make_headers())
         if VERBOSE_ITEM_WIDGET:
-            print('context request')
+            logger.info('context request')
 
 
 if __name__ == '__main__':

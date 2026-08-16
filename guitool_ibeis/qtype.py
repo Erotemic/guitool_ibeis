@@ -17,7 +17,6 @@ __STR__ = str
 
 QString = __STR__
 
-(print, rrr, profile) = ut.inject2(__name__)
 
 
 SIMPLE_CASTING = True
@@ -107,7 +106,6 @@ def locale_float(float_, precision=4):
     return LOCALE.toString(float(float_), format='g', precision=precision)
 
 
-#@profile
 def cast_into_qt(data):
     """
     Casts python data into a representation suitable for QT (usually a string)

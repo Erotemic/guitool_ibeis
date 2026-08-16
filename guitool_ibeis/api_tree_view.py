@@ -7,7 +7,6 @@ from guitool_ibeis.guitool_decorators import signal_, slot_
 import utool as ut
 from guitool_ibeis import api_item_view
 
-(print, rrr, profile) = ut.inject2(__name__)
 
 
 # If you need to set the selected index try:

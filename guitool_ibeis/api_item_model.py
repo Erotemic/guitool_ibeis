@@ -18,7 +18,6 @@ import cachetools
 ut.noinject(__name__, '[APIItemModel]')
 
 #raise ImportError('refused to import guitool_ibeis')
-profile = ut.profile
 
 API_MODEL_BASE = QtCore.QAbstractItemModel
 

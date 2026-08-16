@@ -5,7 +5,6 @@ from guitool_ibeis import api_item_view
 from guitool_ibeis.guitool_decorators import signal_, slot_
 import utool
 
-(print, rrr, profile) = utool.inject2(__name__, '[APITableView]', DEBUG=False)
 
 
 # If you need to set the selected index try:

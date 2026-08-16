@@ -2,9 +2,7 @@ from __future__ import absolute_import, division, print_function
 from guitool_ibeis.__PYQT__ import QtCore, QtGui
 from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 import six
-import utool
 import sys
-import logging
 from guitool_ibeis.guitool_decorators import slot_
 from guitool_ibeis import guitool_main
 import utool as ut
@@ -134,22 +132,15 @@ class GUILoggingSender(QtCore.QObject):
         self.write_.emit(str(msg))
 
 
-class GUILoggingHandler(logging.StreamHandler):
-    """
-    A handler class which sends messages to to a connected QSlot
-    """
+class GUILoggingSink(object):
+    """Forward Loguru messages to the Qt log widget."""
+
     def __init__(self, write_slot):
-        super(GUILoggingHandler, self).__init__()
         self.sender = GUILoggingSender(write_slot)
 
-    def emit(self, record):
-        try:
-            msg = self.format(record) + '\n'
-            self.sender.write_.emit(msg)
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            self.handleError(record)
+    def __call__(self, message):
+        prefix = message.record['extra'].get('utool_indent', '')
+        self.sender.write_.emit(prefix + str(message))
 
 
 class QLoggedOutput(QtWidgets.QTextEdit):
@@ -159,19 +150,10 @@ class QLoggedOutput(QtWidgets.QTextEdit):
         self.setAcceptRichText(False)
         self.setReadOnly(True)
         self.setVisible(visible)
-        self.logging_handler = None
-        if visible:
-            self._initialize_handler()
 
-    def setVisible(self, flag):
-        if flag and self.logging_handler is None:
-            # Make sure handler is initialized on first go
-            self._initialize_handler()
-        super(QLoggedOutput, self).setVisible(flag)
-
-    def _initialize_handler(self):
-        self.logging_handler = GUILoggingHandler(self.gui_write)
-        utool.add_logging_handler(self.logging_handler)
+    def make_logging_sink(self):
+        """Return a Qt-safe sink; the application decides whether to attach it."""
+        return GUILoggingSink(self.gui_write)
 
     @slot_(str)
     def gui_write(outputEdit, msg_):
