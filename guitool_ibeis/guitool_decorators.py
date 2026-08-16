@@ -4,7 +4,6 @@ from guitool_ibeis.__PYQT__ import QtCore, QtGui  # NOQA
 from guitool_ibeis.__PYQT__.QtCore import Qt      # NOQA
 import utool as ut
 from utool._internal import meta_util_six
-ut.noinject(__name__, '[guitool_ibeis.decorators]', DEBUG=False)
 
 DEBUG = False
 

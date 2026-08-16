@@ -15,7 +15,6 @@ import cachetools
 
 # UTOOL PRINT STATEMENTS CAUSE RACE CONDITIONS IN QT THAT CAN LEAD TO SEGFAULTS
 # DO NOT INJECT THEM IN GUITOOL
-ut.noinject(__name__, '[APIItemModel]')
 
 #raise ImportError('refused to import guitool_ibeis')
 

@@ -9,7 +9,6 @@ from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 import six
 from os.path import exists
 import utool as ut
-ut.noinject(__name__, '[APIThumbDelegate]')
 
 
 VERBOSE_QT = ut.get_argflag(('--verbose-qt', '--verbqt'))

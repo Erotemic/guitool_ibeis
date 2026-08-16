@@ -2,8 +2,6 @@ from __future__ import absolute_import, division, print_function
 from guitool_ibeis.__PYQT__ import QtGui, QtCore  # NOQA
 from guitool_ibeis.__PYQT__ import QtWidgets
 #from guitool_ibeis import guitool_components
-import utool as ut
-ut.noinject(__name__, '[api_timestamp_delegate]', DEBUG=False)
 
 
 DELEGATE_BASE = QtWidgets.QItemDelegate

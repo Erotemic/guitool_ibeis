@@ -7,7 +7,6 @@ from os.path import dirname
 import platform
 from utool import util_cache, util_path
 import utool as ut
-ut.noinject(__name__, '[guitool_ibeis.dialogs]', DEBUG=False)
 
 
 SELDIR_CACHEID = 'guitool_selected_directory'

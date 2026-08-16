@@ -5,7 +5,6 @@ from guitool_ibeis.__PYQT__ import QtCore
 from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 from guitool_ibeis.__PYQT__ import GUITOOL_PYQT_VERSION  # NOQA
 import utool as ut
-ut.noinject(__name__, '[guitool_ibeis.main]', DEBUG=False)
 
 
 IS_ROOT_WINDOW = False

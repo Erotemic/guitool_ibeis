@@ -6,7 +6,6 @@ import math
 import utool
 
 import six
-utool.noinject(__name__, '[StripProxyModel]', DEBUG=False)
 
 #STRIPE_PROXY_BASE = QtGui.QAbstractProxyModel
 #STRIPE_PROXY_BASE = QtGui.QSortFilterProxyModel

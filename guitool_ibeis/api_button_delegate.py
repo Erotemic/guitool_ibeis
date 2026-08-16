@@ -3,8 +3,6 @@ from guitool_ibeis.__PYQT__ import QtGui, QtCore  # NOQA
 from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 from guitool_ibeis import guitool_components
 import utool
-import utool as ut
-ut.noinject(__name__, '[api_button_delegate]', DEBUG=False)
 
 
 #DELEGATE_BASE = QtWidgets.QItemDelegate
