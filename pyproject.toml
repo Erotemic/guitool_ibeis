@@ -1,40 +1,144 @@
 [build-system]
-requires = [ "setuptools>=41.0.1", "wheel>=0.37.1",]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools>=41.0.1",
+  "setuptools>=77",
+  "wheel>=0.37.1",
+]
+
+[project]
+name = "guitool_ibeis"
+description = "Guitool - tools for PyQt5 guis"
+license = "Apache-2.0"
+license-files = [
+  "LICENSE",
+]
+authors = [ { name = "Jon Crall", email = "erotemic@gmail.com" } ]
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+]
+dynamic = [
+  "dependencies",
+  "optional-dependencies",
+  "version",
+]
+urls.Homepage = "https://github.com/Erotemic/guitool_ibeis"
+
+[tool.setuptools]
+include-package-data = true
+dynamic.dependencies.file = [
+  "requirements/runtime.txt",
+]
+dynamic.optional-dependencies.all.file = [
+  "requirements/optional.txt",
+  "requirements/headless.txt",
+  "requirements/graphics.txt",
+  "requirements/build.txt",
+]
+dynamic.optional-dependencies.build.file = [
+  "requirements/build.txt",
+]
+dynamic.optional-dependencies.docs.file = [
+  "requirements/docs.txt",
+]
+dynamic.optional-dependencies.graphics.file = [
+  "requirements/graphics.txt",
+]
+dynamic.optional-dependencies.headless.file = [
+  "requirements/headless.txt",
+]
+dynamic.optional-dependencies.optional.file = [
+  "requirements/optional.txt",
+]
+dynamic.optional-dependencies.tests.file = [
+  "requirements/tests.txt",
+]
+dynamic.readme.file = [
+  "README.rst",
+]
+dynamic.readme.content-type = "text/x-rst"
+dynamic.version.attr = "guitool_ibeis.__version__"
+package-data."*" = [
+  "requirements/*.txt",
+]
+packages.find.where = [
+  ".",
+]
+packages.find.include = [
+  "guitool_ibeis*",
+]
 
 [tool.mypy]
 ignore_missing_imports = true
 
+[tool.pytest]
+ini_options.addopts = "-p no:doctest --xdoctest --xdoctest-style=google --ignore-glob=setup.py --ignore-glob=dev --ignore-glob=docs"
+ini_options.norecursedirs = ".git ignore build __pycache__ dev _skbuild docs"
+ini_options.filterwarnings = [
+  "default",
+  "ignore:.*No cfgstr given in Cacher constructor or call.*:Warning",
+  "ignore:.*Define the __nice__ method for.*:Warning",
+  "ignore:.*private pytest class or function.*:Warning",
+]
+
+[tool.coverage]
+run.branch = true
+report.exclude_lines = [
+  ".*  # nocover",
+  ".*  # pragma: no cover",
+  ".*if six.PY2:",
+  "^ *pass *$",
+  "^ *raise",
+  "def __repr__",
+  "if __name__ == .__main__.:",
+  "if _debug:",
+  "if 0:",
+  "if trace is not None",
+  "pragma: no cover",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "verbose = .*",
+]
+report.omit = [
+  "*/setup.py",
+  "guitool_ibeis/__main__.py",
+]
+
 [tool.xcookie]
-tags = [ "github", "erotemic", "purepy", "cv2", "notypes" ]
+tags = [
+  "github",
+  "erotemic",
+  "purepy",
+  "cv2",
+  "notypes",
+]
 mod_name = "guitool_ibeis"
 repo_name = "guitool_ibeis"
 description = "Guitool - tools for PyQt5 guis"
-url="https://github.com/Erotemic/guitool_ibeis"
-author="Jon Crall"
+url = "https://github.com/Erotemic/guitool_ibeis"
+author = "Jon Crall"
 version = "{mod_dpath}/__init__.py::__version__"
-author_email="erotemic@gmail.com"
+author_email = "erotemic@gmail.com"
 license = "Apache 2"
 dev_status = "beta"
-min_python = 3.8
-# ci_cpython_versions = ["3.7", "3.8", "3.9", "3.10"]
-#supported_python_versions = ["3.7", "3.8", "3.9", "3.10"]
+min_python = "3.9"
 ci_pypy_versions = []
 autostage = true
-os = [ "linux" ]
-
-[tool.pytest.ini_options]
-addopts = "-p no:doctest --xdoctest --xdoctest-style=google --ignore-glob=setup.py --ignore-glob=docs"
-norecursedirs = ".git ignore build __pycache__ dev _skbuild docs"
-filterwarnings = [
-    "default",
-    "ignore:.*No cfgstr given in Cacher constructor or call.*:Warning",
-    "ignore:.*Define the __nice__ method for.*:Warning",
-    "ignore:.*private pytest class or function.*:Warning",
+os = [
+  "linux", "windows", "osx"
 ]
-
-[tool.coverage.run]
-branch = true
-
-[tool.coverage.report]
-exclude_lines = [ "pragma: no cover", ".*  # pragma: no cover", ".*  # nocover", "def __repr__", "raise AssertionError", "raise NotImplementedError", "if 0:", "if trace is not None", "verbose = .*", "^ *raise", "^ *pass *$", "if _debug:", "if __name__ == .__main__.:", ".*if six.PY2:",]
-omit = [ "guitool_ibeis/__main__.py", "*/setup.py",]
+use_pyproject_requirements = false
+use_setup_py = false
+ci_pypi_trusted_publishing = true
+enable_gpg = true
