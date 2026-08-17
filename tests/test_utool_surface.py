@@ -20,7 +20,7 @@ def _active_noinject_sites():
                 and isinstance(node.func, ast.Attribute)
                 and node.func.attr == 'noinject'
             ):
-                sites.append(str(path.relative_to(ROOT)))
+                sites.append(path.relative_to(ROOT).as_posix())
     return sorted(sites)
 
 
@@ -54,3 +54,26 @@ def test_pyqt_shims_and_simple_delegates_are_utool_free():
         'guitool_ibeis/guitool_delegates.py',
     ]
     assert not [rel for rel in relpaths if _imports_utool(ROOT / rel)]
+
+
+def test_strict_locks_use_a_windows_compatible_qt_runtime():
+    lock_relpaths = [
+        'requirements/locks/tests-headless.txt',
+        'requirements/locks/tests-optional-headless.txt',
+    ]
+    for relpath in lock_relpaths:
+        text = (ROOT / relpath).read_text()
+        qt_lines = [
+            line for line in text.splitlines()
+            if line.startswith('pyqt5-qt5==')
+        ]
+        assert any(
+            line.startswith('pyqt5-qt5==5.15.2 ;')
+            and "sys_platform == 'win32'" in line
+            for line in qt_lines
+        ), relpath
+        assert all(
+            "sys_platform != 'win32'" in line
+            for line in qt_lines
+            if not line.startswith('pyqt5-qt5==5.15.2 ;')
+        ), relpath

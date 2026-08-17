@@ -119,12 +119,10 @@ RUNNING_CREATION_THREADS = {}
 
 
 def register_thread(key, val):
-    global RUNNING_CREATION_THREADS
     RUNNING_CREATION_THREADS[key] = val
 
 
 def unregister_thread(key):
-    global RUNNING_CREATION_THREADS
     del RUNNING_CREATION_THREADS[key]
 
 

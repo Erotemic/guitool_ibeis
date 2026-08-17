@@ -443,11 +443,9 @@ __MESSAGE_BOXES__ = []
 
 def _register_msgbox(msgbox):
     """ Dont let the message box lose scope """
-    global __MESSAGE_BOXES__
     __MESSAGE_BOXES__.append(msgbox)
     @QtCore.pyqtSlot(QtCore.QObject)
     def _close_msgbox(qobj):
-        global __MESSAGE_BOXES__
         __MESSAGE_BOXES__.remove(msgbox)
     msgbox.destroyed.connect(_close_msgbox)
 

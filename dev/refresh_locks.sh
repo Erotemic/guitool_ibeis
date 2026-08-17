@@ -13,6 +13,51 @@ cd "$(dirname "$0")/.."
 
 uv lock
 
+
+normalize_windows_pyqt5_qt5_constraint() {
+    local lock_fpath="$1"
+    python - "$lock_fpath" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+lock_fpath = Path(sys.argv[1])
+text = lock_fpath.read_text()
+qt_lines = [line for line in text.splitlines() if line.startswith('pyqt5-qt5==')]
+
+# PyQt5-Qt5 5.15.19 currently has no Windows wheel. PyQt5 itself permits
+# 5.15.2, and that runtime has win32/win_amd64 wheels. Keep the newest uv
+# selection everywhere else while constraining Windows to the compatible
+# runtime until upstream publishes a newer Windows build.
+if any("sys_platform == 'win32'" in line for line in qt_lines):
+    raise SystemExit(0)
+
+pattern = re.compile(
+    r"^pyqt5-qt5==(?P<version>[^ ;]+) ; (?P<marker>.+)$",
+    re.MULTILINE,
+)
+match = pattern.search(text)
+if match is None:
+    raise RuntimeError(f'Unable to locate PyQt5-Qt5 constraint in {lock_fpath}')
+
+selected_version = match.group('version')
+if selected_version == '5.15.2':
+    raise SystemExit(0)
+
+marker = match.group('marker')
+old = match.group(0) + "\n    # via pyqt5"
+new = (
+    f"pyqt5-qt5=={selected_version} ; ({marker}) and sys_platform != 'win32'\n"
+    "    # via pyqt5\n"
+    f"pyqt5-qt5==5.15.2 ; ({marker}) and sys_platform == 'win32'\n"
+    "    # via pyqt5"
+)
+if old not in text:
+    raise RuntimeError(f'Unexpected PyQt5-Qt5 annotation in {lock_fpath}')
+lock_fpath.write_text(text.replace(old, new, 1))
+PY
+}
+
 # Strict CI variant extras: tests, headless
 uv export --frozen --no-emit-project --format requirements.txt --no-hashes \
     --extra tests \
@@ -25,3 +70,6 @@ uv export --frozen --no-emit-project --format requirements.txt --no-hashes \
     --extra optional \
     --extra headless \
     -o requirements/locks/tests-optional-headless.txt
+
+normalize_windows_pyqt5_qt5_constraint requirements/locks/tests-headless.txt
+normalize_windows_pyqt5_qt5_constraint requirements/locks/tests-optional-headless.txt
