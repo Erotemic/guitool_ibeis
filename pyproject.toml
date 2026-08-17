@@ -14,11 +14,10 @@ license-files = [
   "LICENSE",
 ]
 authors = [ { name = "Jon Crall", email = "erotemic@gmail.com" } ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -132,7 +131,7 @@ version = "{mod_dpath}/__init__.py::__version__"
 author_email = "erotemic@gmail.com"
 license = "Apache 2"
 dev_status = "beta"
-min_python = "3.9"
+min_python = "3.10"
 ci_pypy_versions = []
 autostage = true
 os = [

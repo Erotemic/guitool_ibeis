@@ -2,7 +2,7 @@
 
 #docker run -it python3 bash
 
-IMAGE_NAME=python:3.9
+IMAGE_NAME=python:3.10
 docker run -v "$PWD":/io:ro -v "$HOME"/.cache/pip:/pip_cache -it $IMAGE_NAME bash
 
 
@@ -69,8 +69,8 @@ apt install libdbus-1-3
 #libxkbcommon0
 
 
-ldd /root/repo/venv39/lib/python3.9/site-packages/PyQt5/Qt5/plugins/platforms/libqxcb.so
-ldd /root/repo/venv39/lib/python3.9/site-packages/PyQt5/Qt5/plugins/platforms/libqxcb| grep "not found"
+ldd /root/repo/venv310/lib/python3.10/site-packages/PyQt5/Qt5/plugins/platforms/libqxcb.so
+ldd /root/repo/venv310/lib/python3.10/site-packages/PyQt5/Qt5/plugins/platforms/libqxcb| grep "not found"
 
 export QT_DEBUG_PLUGINS=1
 xdoctest guitool_ibeis
