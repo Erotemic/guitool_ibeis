@@ -12,7 +12,6 @@ from guitool_ibeis.__PYQT__.QtCore import Qt
 from guitool_ibeis import qtype
 import utool as ut
 from utool import util_type
-ut.noinject(__name__, '[PreferenceWidget]', DEBUG=False)
 
 VERBOSE_PREF = ut.get_argflag('--verbpref')
 

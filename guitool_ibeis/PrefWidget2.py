@@ -17,7 +17,6 @@ from guitool_ibeis.__PYQT__ import GUITOOL_PYQT_VERSION
 from guitool_ibeis.__PYQT__.QtCore import Qt, QAbstractItemModel, QModelIndex, QObject
 from guitool_ibeis.__PYQT__ import _fromUtf8, _encoding, _translate  # NOQA
 import utool as ut
-ut.noinject(__name__, '[PrefWidget2]', DEBUG=False)
 
 VERBOSE_CONFIG = ut.VERBOSE or ut.get_argflag('--verbconf')
 

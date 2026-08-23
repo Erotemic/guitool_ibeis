@@ -1,7 +1,5 @@
 # flake8:noqa
 from __future__ import absolute_import, division, print_function, unicode_literals
-import utool as ut
-ut.noinject(__name__, '[__PYQT__.__init__]')
 from . import _internal
 
 GUITOOL_PYQT_VERSION = _internal.GUITOOL_PYQT_VERSION
@@ -39,7 +37,7 @@ try:
     def _translate(context, text, disambig):
         return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
-    _encoding = ut.identity
+    _encoding = lambda value: value
     def _translate(context, text, disambig):
         return QtWidgets.QApplication.translate(context, text, disambig)
 #print('__pyqt5__2')

@@ -3,7 +3,6 @@ from guitool_ibeis.__PYQT__ import QtGui, QtCore  # NOQA
 from guitool_ibeis.__PYQT__.QtCore import Qt
 import utool
 
-utool.noinject(__name__, '[APIItemView]', DEBUG=False)
 
 #BASE_CLASS = QtGui.QAbstractProxyModel
 try:

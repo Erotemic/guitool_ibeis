@@ -7,7 +7,6 @@ from os.path import dirname
 import platform
 from utool import util_cache, util_path
 import utool as ut
-ut.noinject(__name__, '[guitool_ibeis.dialogs]', DEBUG=False)
 
 
 SELDIR_CACHEID = 'guitool_selected_directory'
@@ -444,11 +443,9 @@ __MESSAGE_BOXES__ = []
 
 def _register_msgbox(msgbox):
     """ Dont let the message box lose scope """
-    global __MESSAGE_BOXES__
     __MESSAGE_BOXES__.append(msgbox)
     @QtCore.pyqtSlot(QtCore.QObject)
     def _close_msgbox(qobj):
-        global __MESSAGE_BOXES__
         __MESSAGE_BOXES__.remove(msgbox)
     msgbox.destroyed.connect(_close_msgbox)
 

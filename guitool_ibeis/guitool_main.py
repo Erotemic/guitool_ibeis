@@ -5,7 +5,6 @@ from guitool_ibeis.__PYQT__ import QtCore
 from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 from guitool_ibeis.__PYQT__ import GUITOOL_PYQT_VERSION  # NOQA
 import utool as ut
-ut.noinject(__name__, '[guitool_ibeis.main]', DEBUG=False)
 
 
 IS_ROOT_WINDOW = False
@@ -15,7 +14,6 @@ QUIET = '--quiet' in sys.argv
 
 
 def get_qtapp():
-    global QAPP
     return QAPP
 
 
@@ -86,7 +84,6 @@ ensure_qapp = ensure_qtapp
 
 
 def activate_qwindow(qwin):
-    global QAPP
     if not QUIET:
         print('[guitool_ibeis] qapp.setActiveWindow(qwin)')
     qwin.show()
@@ -106,7 +103,6 @@ def qtapp_loop_nonblocking(qwin=None, **kwargs):
         import IPython.terminal.pt_inputhooks
         inputhook = IPython.terminal.pt_inputhooks.get_inputhook_func('qt4')
     """
-    global QAPP
     #from IPython.lib.inputhook import enable_qt4
     import IPython.lib.guisupport
     if not QUIET:
@@ -146,7 +142,6 @@ def qtapp_loop(qwin=None, ipy=False, enable_activate_qwin=True, frequency=420,
     CommandLine:
         python -m guitool_ibeis.guitool_main --test-qtapp_loop
     """
-    global QAPP
     #if not QUIET and VERBOSE:
     if not QUIET:
         print('[guitool_ibeis.qtapp_loop()] ENTERING')

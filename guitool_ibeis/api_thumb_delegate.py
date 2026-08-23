@@ -9,7 +9,6 @@ from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 import six
 from os.path import exists
 import utool as ut
-ut.noinject(__name__, '[APIThumbDelegate]')
 
 
 VERBOSE_QT = ut.get_argflag(('--verbose-qt', '--verbqt'))
@@ -120,12 +119,10 @@ RUNNING_CREATION_THREADS = {}
 
 
 def register_thread(key, val):
-    global RUNNING_CREATION_THREADS
     RUNNING_CREATION_THREADS[key] = val
 
 
 def unregister_thread(key):
-    global RUNNING_CREATION_THREADS
     del RUNNING_CREATION_THREADS[key]
 
 
