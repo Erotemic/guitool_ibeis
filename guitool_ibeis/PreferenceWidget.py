@@ -2,9 +2,8 @@
 old code ported from utool
 """
 from __future__ import absolute_import, division, print_function
-import sys
+from loguru import logger
 import six
-import traceback
 from utool.Preferences import Pref, PrefNode, PrefChoice
 from guitool_ibeis.__PYQT__ import _fromUtf8, _translate, QVariantHack
 from guitool_ibeis.__PYQT__ import QtWidgets, QtCore
@@ -22,11 +21,8 @@ def report_thread_error(fn):
         try:
             ret = fn(*args, **kwargs)
             return ret
-        except Exception as ex:
-            print('\n\n *!!* Thread Raised Exception: ' + str(ex))
-            print('\n\n *!!* Thread Exception Traceback: \n\n' + traceback.format_exc())
-            sys.stdout.flush()
-            et, ei, tb = sys.exc_info()
+        except Exception:
+            logger.exception('Qt callback raised an exception')
             raise
     return report_thread_error_wrapper
 
