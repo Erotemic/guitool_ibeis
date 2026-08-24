@@ -4,7 +4,6 @@ from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 import six
 import sys
 from guitool_ibeis.guitool_decorators import slot_
-from guitool_ibeis import guitool_main
 import utool as ut
 ut.noinject(__name__)
 
@@ -124,9 +123,13 @@ class BlockContext(object):
 # Qt object that will send messages (as signals) to the frontend gui_write slot
 class GUILoggingSender(QtCore.QObject):
     write_ = QtCore.pyqtSignal(str)
+
     def __init__(self, write_slot):
         QtCore.QObject.__init__(self)
-        self.write_.connect(write_slot)
+        # Always queue GUI log updates.  A direct connection on the GUI thread
+        # can mutate widgets while another widget is inside paintEvent(), and
+        # the old gui_write() compounded that by recursively processing events.
+        self.write_.connect(write_slot, QtCore.Qt.QueuedConnection)
 
     def write_gui(self, msg):
         self.write_.emit(str(msg))
@@ -157,23 +160,22 @@ class QLoggedOutput(QtWidgets.QTextEdit):
 
     @slot_(str)
     def gui_write(outputEdit, msg_):
-        # Slot for teed log output
-        app = guitool_main.get_qtapp()
-        # Write msg to text area
+        # Log delivery is queued by GUILoggingSender.  Do not call
+        # QApplication.processEvents() here: nested event processing while a
+        # paint transaction is active can recurse into QWidget painting and
+        # corrupt the QBackingStore / QPainter lifecycle.
         outputEdit.moveCursor(QtGui.QTextCursor.End)
         # TODO: Find out how to do backspaces in textEdit
         msg = str(msg_)
         if msg.find('\b') != -1:
             msg = msg.replace('\b', '') + '\n'
         outputEdit.insertPlainText(msg)
-        if app is not None:
-            app.processEvents()
 
     @slot_()
     def gui_flush(outputEdit):
-        app = guitool_main.get_qtapp()
-        if app is not None:
-            app.processEvents()
+        # Retained for the legacy output API.  Qt will paint queued writes when
+        # control returns to the normal event loop.
+        return None
 
 
 def get_cplat_tab_height():

@@ -28,15 +28,25 @@ class GuitoolApplication(QtWidgets.QApplication):
         self.keylog = []
 
     def notify(self, receiver, event):
-        if event.type() == QtCore.QEvent.KeyPress:
-            if self.log_keys:
-                key = event.text()
-                print('key = %r' % (key,))
-                self.keylog.append(key)
-            #QtWidgets.QMessageBox.information(
-            #    None, "Received Key Press Event!!", "You Pressed: " + event.text())
-        # Call Base Class Method to Continue Normal Event Processing
-        return super(GuitoolApplication, self).notify(receiver, event)
+        """Dispatch one Qt event without letting Python exceptions escape Qt.
+
+        PyQt may terminate the application when an exception crosses a Qt
+        callback boundary.  Route the exception through the application's
+        normal ``sys.excepthook`` instead, then mark this event as failed.
+        """
+        try:
+            if event.type() == QtCore.QEvent.KeyPress:
+                if self.log_keys:
+                    key = event.text()
+                    print('key = %r' % (key,))
+                    self.keylog.append(key)
+                #QtWidgets.QMessageBox.information(
+                #    None, "Received Key Press Event!!", "You Pressed: " + event.text())
+            # Call Base Class Method to Continue Normal Event Processing
+            return super(GuitoolApplication, self).notify(receiver, event)
+        except Exception:
+            sys.excepthook(*sys.exc_info())
+            return False
 
     def start_keylog(self):
         self.log_keys = True
