@@ -9,6 +9,7 @@ from guitool_ibeis.__PYQT__ import QtWidgets  # NOQA
 import six
 from os.path import exists
 import utool as ut
+from loguru import logger
 
 
 VERBOSE_QT = ut.get_argflag(('--verbose-qt', '--verbqt'))
@@ -157,6 +158,7 @@ class APIThumbDelegate(DELEGATE_BASE):
             dgt.get_thumb_size = get_thumb_size  # 256
         dgt.last_thumbsize = None
         dgt.row_rezised_flags = {}  # SUPER HACK FOR RESIZE SHRINK
+        dgt._pending_resize_keys = set()
         try:
             import cachetools
             dgt.thumb_cache = cachetools.TTLCache(256, ttl=2)
@@ -166,9 +168,7 @@ class APIThumbDelegate(DELEGATE_BASE):
         #utool.embed()
 
     def paint(dgt, painter, option, qtindex):
-        """
-        TODO: prevent recursive paint
-        """
+        """Paint one thumbnail without re-entering Qt's paint machinery."""
         view = dgt.parent()
         offset = view.verticalOffset() + option.rect.y()
         # Check if still in viewport
@@ -187,22 +187,27 @@ class APIThumbDelegate(DELEGATE_BASE):
                     qimg = read_thumb_as_qimg(thumb_path)
                     dgt.thumb_cache[thumb_path] = qimg
                 width, height = qimg.width(), qimg.height()
-                # Adjust the cell size to fit the image
+                # Geometry changes can trigger layout / repaint.  Defer them
+                # until the current backing-store paint transaction has ended.
                 dgt.adjust_thumb_cell_size(qtindex, width, height)
                 # Check if still in viewport
                 if view_would_not_be_visible(view, offset):
                     return None
-                # Paint image on an item in some view
+                # The painter is owned by Qt.  Balance its state even when a
+                # PyQt call raises; never call painter.end() on this object.
                 painter.save()
-                painter.setClipRect(option.rect)
-                painter.translate(option.rect.x(), option.rect.y())
-                painter.drawImage(QtCore.QRectF(0, 0, width, height), qimg)
-                painter.restore()
-        except Exception as ex:
-            print('Error in APIThumbDelegate')
-            ut.printex(ex, 'Error in APIThumbDelegate', tb=True)
-            painter.save()
-            painter.restore()
+                try:
+                    painter.setClipRect(option.rect)
+                    painter.translate(option.rect.x(), option.rect.y())
+                    painter.drawImage(QtCore.QRectF(0, 0, width, height), qimg)
+                finally:
+                    painter.restore()
+        except Exception:
+            # Paint callbacks must contain their own Python failures.  Letting
+            # an exception cross the Qt paint boundary can leave the backing
+            # store in an invalid state before the application-level reporter
+            # has a chance to run.
+            logger.exception('Error in APIThumbDelegate.paint')
 
     def sizeHint(dgt, option, qtindex):
         view = dgt.parent()
@@ -360,45 +365,58 @@ class APIThumbDelegate(DELEGATE_BASE):
             return thumb_path
 
     def adjust_thumb_cell_size(dgt, qtindex, width, height):
-        """
-        called during paint to ensure that the cell is large enough for the
-        image.
-        """
+        """Queue cell geometry changes for after the current paint event."""
         view = dgt.parent()
-        if isinstance(view, QtWidgets.QTableView):
-            # dimensions of the table cells
-            row = qtindex.row()
-            col_width = view.columnWidth(qtindex.column())
-            col_height = view.rowHeight(row)
-            thumbsize = dgt.get_thumb_size()
-            if thumbsize != dgt.last_thumbsize:
-                # has thumbsize changed?
-                if thumbsize != col_width:
-                    view.setColumnWidth(qtindex.column(), thumbsize)
-                if height != col_height:
-                    view.setRowHeight(qtindex.row(), height)
-                dgt.last_thumbsize = thumbsize
-            # Let columns shrink
-            if thumbsize != col_width:
-                view.setColumnWidth(qtindex.column(), thumbsize)
-            # Let rows grow
-            if height > col_height:
-                view.setRowHeight(qtindex.row(), height)
-            if dgt.row_rezised_flags.get(row):
-                # HACK TO ONLY SHRINK ONCE WONT WORK WITH RESORT
+        if not isinstance(view, QtWidgets.QTableView):
+            return
+
+        row = qtindex.row()
+        column = qtindex.column()
+        thumbsize = dgt.get_thumb_size()
+        col_width = view.columnWidth(column)
+        col_height = view.rowHeight(row)
+        needs_row_resize = (
+            height > col_height or
+            (height < col_height and not dgt.row_rezised_flags.get(row))
+        )
+        if thumbsize == col_width and not needs_row_resize:
+            return
+
+        persistent_index = QtCore.QPersistentModelIndex(qtindex)
+        key = (row, column, int(width), int(height), int(thumbsize))
+        if key in dgt._pending_resize_keys:
+            return
+        dgt._pending_resize_keys.add(key)
+
+        def apply_resize():
+            dgt._pending_resize_keys.discard(key)
+            if not persistent_index.isValid():
                 return
-            else:
+            try:
+                view_ = dgt.parent()
+            except RuntimeError:
+                return
+            if not isinstance(view_, QtWidgets.QTableView):
+                return
+
+            row = persistent_index.row()
+            column = persistent_index.column()
+            col_width = view_.columnWidth(column)
+            col_height = view_.rowHeight(row)
+
+            if thumbsize != col_width:
+                view_.setColumnWidth(column, thumbsize)
+            if height > col_height:
+                view_.setRowHeight(row, height)
+            elif not dgt.row_rezised_flags.get(row):
+                # Preserve the historical one-time shrink behavior without
+                # changing geometry from inside the delegate paint callback.
                 dgt.row_rezised_flags[row] = True
-                # Let rows shrink
-                # IF THERE IS MORE THAN ONE COLUMN WITH THUMBS THEN THIS WILL CAUSE
-                # COLS TO BE RESIZED MANY TIMES UNDER THE HOOD. THAT CAUSES
-                # MULTIPLE READS OF THE THUMBS WHICH CAUSES MAJOR SLOWDOWNS.
                 if height < col_height:
-                    view.setRowHeight(qtindex.row(), height)
-        elif isinstance(view, QtWidgets.QTreeView):
-            col_width = view.columnWidth(qtindex.column())
-            col_height = view.rowHeight(qtindex)
-            # TODO: finishme
+                    view_.setRowHeight(row, height)
+            dgt.last_thumbsize = thumbsize
+
+        QtCore.QTimer.singleShot(0, apply_resize)
 
 
 def view_would_not_be_visible(view, offset):
